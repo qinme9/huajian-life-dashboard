@@ -4,7 +4,7 @@
 
 A warm and healing college-life dashboard. Single-file HTML, no installation or build required — open and use it directly.
 
-[中文版](README_zh-CN.md) · [Back to language selection](README.md)
+[中文版](README.md)
 
 </div>
 
