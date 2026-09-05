@@ -364,6 +364,11 @@
   .pomodoro-settings { display:flex; gap:10px; justify-content:center; margin:6px 0 8px; flex-wrap:wrap; }
   .pomodoro-settings label { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:var(--muted); }
   .pomodoro-settings input { width:70px; padding:5px 8px; }
+  .pomo-time-set { display:flex; gap:4px; align-items:center; flex-wrap:wrap; justify-content:center; font-size:12px; color:var(--muted); }
+  .pomo-time-set input { width:52px; }
+  .pomodoro-sound { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; align-items:center; margin-top:8px; font-size:12px; color:var(--muted); }
+  .pomodoro-sound select { width:auto; padding:4px 8px; }
+  .pomodoro-sound button { padding:4px 8px; }
   .pomodoro-time { font-size:48px; font-weight:800; color:var(--coral); line-height:1.2; }
   .pomodoro-mode { color:var(--muted); font-size:13px; margin-bottom:8px; }
   .hidden-file { display:none; }
@@ -382,9 +387,49 @@
   body.theme-dark input, body.theme-dark select, body.theme-dark textarea { background:#1f2a25; color:var(--text); border-color:#47584e; }
   body.theme-dark .empty { background:rgba(255,255,255,.03); }
 
+  /* Auth login */
+  .auth-mask {
+    position:fixed; inset:0; background:var(--cream); z-index:200;
+    display:flex; align-items:center; justify-content:center; padding:20px;
+  }
+  .auth-card {
+    background:var(--paper); border:1px solid var(--line); border-radius:26px;
+    box-shadow:var(--shadow); padding:30px; width:100%; max-width:420px;
+  }
+  .auth-card .auth-logo { font-size:42px; text-align:center; margin-bottom:8px; }
+  .auth-card h1 { text-align:center; color:var(--green-dark); font-size:24px; letter-spacing:2px; margin-bottom:4px; }
+  .auth-card .auth-sub { text-align:center; color:var(--muted); font-size:13px; margin-bottom:18px; }
+  .auth-card .field { margin-bottom:12px; }
+  .auth-card .btn { width:100%; margin-top:4px; }
+  .auth-card .auth-switch { text-align:center; margin-top:14px; font-size:13px; color:var(--muted); }
+  .auth-card .auth-switch button { background:none; border:none; color:var(--coral); cursor:pointer; font-family:inherit; font-size:13px; }
+  .auth-msg { min-height:18px; font-size:12px; color:var(--coral); text-align:center; margin:6px 0; }
+
 </style>
 </head>
 <body>
+<div class="auth-mask" id="authMask">
+  <div class="auth-card">
+    <div class="auth-logo">🌸</div>
+    <h1>花笺 · 大学生活手记</h1>
+    <div class="auth-sub">登录后继续 / Sign in to continue</div>
+    <div id="authLoginView">
+      <div class="field"><label class="field-label">用户名 / Username</label><input id="authUsername" autocomplete="username"></div>
+      <div class="field"><label class="field-label">密码 / Password</label><input id="authPassword" type="password" autocomplete="current-password"></div>
+      <div class="auth-msg" id="authMessage"></div>
+      <button class="btn btn-coral" id="authLoginBtn">登录 / Sign in</button>
+      <div class="auth-switch">还没有账号？<button id="authGoRegister">创建账号 / Create account</button></div>
+    </div>
+    <div id="authRegisterView" style="display:none;">
+      <div class="field"><label class="field-label">用户名 / Username</label><input id="regUsername" autocomplete="username"></div>
+      <div class="field"><label class="field-label">密码 / Password</label><input id="regPassword" type="password" autocomplete="new-password"></div>
+      <div class="field"><label class="field-label">确认密码 / Confirm password</label><input id="regPassword2" type="password" autocomplete="new-password"></div>
+      <div class="auth-msg" id="regMessage"></div>
+      <button class="btn btn-coral" id="authRegisterBtn">创建账号 / Create account</button>
+      <div class="auth-switch">已有账号？<button id="authGoLogin">返回登录 / Back to sign in</button></div>
+    </div>
+  </div>
+</div>
 <button class="sidebar-fab" id="sidebarFab" title="打开侧边栏" aria-label="打开侧边栏">🌸</button>
 <aside class="sidebar" id="sidebar" aria-label="导航侧边栏">
   <div class="sidebar-head">
@@ -423,6 +468,7 @@
       <button class="icon-text-btn" id="themeToggle" title="切换浅色/深色主题">🌓 <span data-i18n="header.theme">主题</span></button>
       <button class="icon-text-btn" id="langToggle" title="切换语言 / Switch language">🌏 <span id="langToggleText">English</span></button>
       <button class="icon-text-btn" id="notificationBtn" title="通知提醒">🔔 <span data-i18n="header.remind">提醒</span></button>
+      <button class="icon-text-btn" id="logoutBtn" style="display:none;" title="退出登录">🚪 <span data-i18n="header.logout">退出</span></button>
       <div class="today-pill" id="todayPill"></div>
     </div>
   </header>
@@ -497,8 +543,28 @@
           <div class="pomodoro-mode" id="pomodoroMode" data-i18n="tools.ready">准备好开始一段专注了吗？</div>
           <div class="pomodoro-time" id="pomodoroTime">25:00</div>
           <div class="pomodoro-settings">
-            <label>🍅 专注 <input type="number" id="pomodoroFocusMin" min="1" max="180" value="25"> min</label>
-            <label>☕ 休息 <input type="number" id="pomodoroBreakMin" min="1" max="60" value="5"> min</label>
+            <div class="pomo-time-set">
+              <span>🍅 专注</span>
+              <input type="number" id="pomodoroFocusH" min="0" max="23" value="0" title="小时/h"> h
+              <input type="number" id="pomodoroFocusM" min="0" max="59" value="25" title="分钟/min"> m
+              <input type="number" id="pomodoroFocusS" min="0" max="59" value="0" title="秒/s"> s
+            </div>
+            <div class="pomo-time-set">
+              <span>☕ 休息</span>
+              <input type="number" id="pomodoroBreakH" min="0" max="23" value="0" title="小时/h"> h
+              <input type="number" id="pomodoroBreakM" min="0" max="59" value="5" title="分钟/min"> m
+              <input type="number" id="pomodoroBreakS" min="0" max="59" value="0" title="秒/s"> s
+            </div>
+          </div>
+          <div class="pomodoro-sound">
+            <span>🔊 结束音效</span>
+            <select id="alarmSoundChoice">
+              <option value="beep">默认提示音</option>
+              <option value="custom">自定义音效</option>
+            </select>
+            <button class="btn btn-light btn-sm" id="alarmUploadBtn">上传音效</button>
+            <button class="btn btn-light btn-sm" id="alarmTestBtn">试听</button>
+            <input type="file" id="alarmUploadFile" class="hidden-file" accept="audio/*">
           </div>
         </div>
         <div class="btn-row" style="justify-content:center;">
@@ -715,7 +781,7 @@
 
 <script>
 (function(){
-  const LS_KEY = 'huajian-life-dashboard-v1';
+  let DATA_KEY = 'huajian-life-dashboard-v1';
   const todayStr = () => toYMD(new Date());
   const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 
@@ -758,12 +824,12 @@
 
   let state;
   try {
-    state = Object.assign(defaultState(), JSON.parse(localStorage.getItem(LS_KEY) || '{}'));
+    state = Object.assign(defaultState(), JSON.parse(localStorage.getItem(DATA_KEY) || '{}'));
   } catch(e) {
     state = defaultState();
   }
   function save() {
-    try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch(e) {}
+    try { localStorage.setItem(DATA_KEY, JSON.stringify(state)); } catch(e) {}
   }
 
   const $ = id => document.getElementById(id);
@@ -776,7 +842,7 @@
   const I18N = {
     zh: {
       'brand.sub':'把日子写成温柔的书签 · 今日也请好好生活',
-      'header.theme':'主题', 'header.remind':'提醒',
+      'header.theme':'主题', 'header.remind':'提醒', 'header.logout':'退出',
       'sidebar.position':'侧边栏位置', 'sidebar.left':'◀ 左侧', 'sidebar.right':'右侧 ▶',
       'sidebar.foot':'🌷 拖动边缘可调宽度 · 可切换左右',
       'nav.overview':'今日总览', 'nav.tools':'效率工具', 'nav.todo':'待办事项', 'nav.habit':'习惯打卡', 'nav.dates':'重要日期', 'nav.ledger':'生活费账本', 'nav.first':'人生第一次',
@@ -797,7 +863,7 @@
 
     en: {
       'brand.sub':'Turning days into gentle bookmarks · live well today',
-      'header.theme':'Theme', 'header.remind':'Remind',
+      'header.theme':'Theme', 'header.remind':'Remind', 'header.logout':'Log out',
       'sidebar.position':'Sidebar side', 'sidebar.left':'◀ Left', 'sidebar.right':'Right ▶',
       'sidebar.foot':'🌷 Drag the edge to resize · Switch left/right',
       'nav.overview':'Overview', 'nav.tools':'Tools', 'nav.todo':'Todos', 'nav.habit':'Habits', 'nav.dates':'Dates', 'nav.ledger':'Ledger', 'nav.first':'First Times',
@@ -1138,17 +1204,29 @@
   let pomodoroRemaining = 25 * 60;
   let pomodoroRunning = false;
   let pomodoroMode = 'focus';
+  let alarmAudioCtx = null;
 
+  function intVal(id, fallback) {
+    const v = parseInt($(id).value, 10);
+    return isNaN(v) || v < 0 ? fallback : v;
+  }
   function pomodoroFocusSec() {
-    return Math.max(1, parseInt($('pomodoroFocusMin').value, 10) || 25) * 60;
+    const h = intVal('pomodoroFocusH', 0);
+    const m = intVal('pomodoroFocusM', 25);
+    const s = intVal('pomodoroFocusS', 0);
+    return Math.max(1, h * 3600 + m * 60 + s);
   }
   function pomodoroBreakSec() {
-    return Math.max(1, parseInt($('pomodoroBreakMin').value, 10) || 5) * 60;
+    const h = intVal('pomodoroBreakH', 0);
+    const m = intVal('pomodoroBreakM', 5);
+    const s = intVal('pomodoroBreakS', 0);
+    return Math.max(1, h * 3600 + m * 60 + s);
   }
   function fmtTime(sec) {
-    const m = String(Math.floor(sec / 60)).padStart(2, '0');
-    const s = String(sec % 60).padStart(2, '0');
-    return m + ':' + s;
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor(sec % 3600 / 60);
+    const s = sec % 60;
+    return (h > 0 ? String(h).padStart(2, '0') + ':' : '') + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
   }
   function updatePomodoroUI() {
     $('pomodoroTime').textContent = fmtTime(pomodoroRemaining);
@@ -1156,20 +1234,51 @@
     $('pomodoroPause').disabled = !pomodoroRunning;
     if (pomodoroRunning) {
       $('pomodoroMode').textContent = pomodoroMode === 'focus'
-        ? (lang === 'zh' ? '专注中 · ' + (pomodoroRemaining / 60 | 0) + ' 分钟' : 'Focusing · ' + (pomodoroRemaining / 60 | 0) + ' min')
-        : (lang === 'zh' ? '休息中 · ' + (pomodoroRemaining / 60 | 0) + ' 分钟' : 'Break · ' + (pomodoroRemaining / 60 | 0) + ' min');
+        ? (lang === 'zh' ? '专注中 · ' + fmtTime(pomodoroRemaining) : 'Focusing · ' + fmtTime(pomodoroRemaining))
+        : (lang === 'zh' ? '休息中 · ' + fmtTime(pomodoroRemaining) : 'Break · ' + fmtTime(pomodoroRemaining));
     } else {
       $('pomodoroMode').textContent = pomodoroMode === 'focus'
-        ? (lang === 'zh' ? '准备好专注 ' + (pomodoroFocusSec() / 60) + ' 分钟了吗？' : 'Ready to focus for ' + (pomodoroFocusSec() / 60) + ' minutes?')
-        : (lang === 'zh' ? '休息 ' + (pomodoroBreakSec() / 60) + ' 分钟吧' : 'Take a ' + (pomodoroBreakSec() / 60) + '-minute break');
+        ? (lang === 'zh' ? '准备好专注 ' + fmtTime(pomodoroFocusSec()) + ' 了吗？' : 'Ready to focus for ' + fmtTime(pomodoroFocusSec()) + '?')
+        : (lang === 'zh' ? '休息 ' + fmtTime(pomodoroBreakSec()) : 'Break ' + fmtTime(pomodoroBreakSec()));
     }
   }
+  function playAlarmSound() {
+    const choice = $('alarmSoundChoice').value;
+    const customUrl = localStorage.getItem('huajian-alarm-custom');
+    if (choice === 'custom' && customUrl) {
+      try {
+        const a = new Audio(customUrl);
+        a.play().catch(() => fallbackBeep());
+        return;
+      } catch(e) {}
+    }
+    fallbackBeep();
+  }
+  function fallbackBeep() {
+    try {
+      if (!alarmAudioCtx) alarmAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const ctx = alarmAudioCtx;
+      const now = ctx.currentTime;
+      [0, 0.25, 0.5].forEach((delay, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = i === 1 ? 880 : 660;
+        gain.gain.setValueAtTime(0.0001, now + delay);
+        gain.gain.exponentialRampToValueAtTime(0.25, now + delay + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + delay + 0.22);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(now + delay);
+        osc.stop(now + delay + 0.25);
+      });
+    } catch(e) {}
+  }
+  function testAlarmSound() { playAlarmSound(); }
+
   function startPomodoro() {
     if (pomodoroRunning) return;
-    // If idle and user changed settings, apply the latest setting to the current round
-    if (pomodoroMode === 'focus' && pomodoroRemaining === pomodoroFocusSec()) {
-      // already synced
-    } else if (!pomodoroRunning && pomodoroRemaining === 25 * 60 && pomodoroMode === 'focus') {
+    // Apply current custom settings if the timer is at the default state or not running
+    if (!pomodoroRunning && pomodoroMode === 'focus' && pomodoroRemaining === 25 * 60) {
       pomodoroRemaining = pomodoroFocusSec();
     }
     pomodoroRunning = true;
@@ -1181,12 +1290,13 @@
         if (pomodoroMode === 'focus') {
           pomodoroMode = 'break';
           pomodoroRemaining = pomodoroBreakSec();
-          notifyBrowser(lang === 'zh' ? '🍅 专注完成' : '🍅 Focus complete', lang === 'zh' ? '休息 ' + (pomodoroBreakSec() / 60) + ' 分钟吧' : 'Take a ' + (pomodoroBreakSec() / 60) + '-minute break');
+          notifyBrowser(lang === 'zh' ? '🍅 专注完成' : '🍅 Focus complete', lang === 'zh' ? '休息 ' + fmtTime(pomodoroBreakSec()) : 'Break ' + fmtTime(pomodoroBreakSec()));
         } else {
           pomodoroMode = 'focus';
           pomodoroRemaining = pomodoroFocusSec();
           notifyBrowser(lang === 'zh' ? '☕ 休息结束' : '☕ Break over', lang === 'zh' ? '开始下一轮专注吧' : 'Start another focus session');
         }
+        playAlarmSound();
       }
       updatePomodoroUI();
     }, 1000);
@@ -1224,16 +1334,17 @@
     }
   }
   function notifyBrowser(title, body) {
+    const fallbackMsg = title + (body ? '：' + body : '');
     if (!('Notification' in window)) {
-      toast(lang === 'zh' ? '当前浏览器不支持通知，已改用站内提醒' : 'Notifications unsupported; using in-page reminder');
+      toast(lang === 'zh' ? '📢 ' + fallbackMsg : '📢 ' + title + ': ' + body);
       return;
     }
     if (Notification.permission === 'granted') {
-      try { new Notification(title, { body }); } catch(e) {}
-    } else if (Notification.permission === 'default') {
-      toast(lang === 'zh' ? '请先开启通知权限' : 'Please enable notification permission first');
+      try { new Notification(title, { body }); } catch(e) { toast('📢 ' + fallbackMsg); }
     } else {
-      toast(lang === 'zh' ? '通知权限被浏览器阻止，请在浏览器设置中允许' : 'Notification blocked; allow this site in browser settings');
+      // Even if browser notifications are blocked, still show an in-app reminder
+      toast('📢 ' + fallbackMsg);
+      updateNotifyUI();
     }
   }
   function buildDailySummary() {
@@ -1374,17 +1485,23 @@
   function renderTodos() {
     const secs = getTodoSections();
     const container = $('todoColumns');
+    const sectionTitles = {
+      today: lang === 'zh' ? '☀️ 今日' : '☀️ Today',
+      future: lang === 'zh' ? '📅 未来 7 天' : '📅 Next 7 Days',
+      overdue: lang === 'zh' ? '⏰ 已逾期' : '⏰ Overdue',
+      done: lang === 'zh' ? '✅ 已完成' : '✅ Completed'
+    };
     const sections = [
-      { key: 'today', title: '☀️ 今日' },
-      { key: 'future', title: '📅 未来 7 天' },
-      { key: 'overdue', title: '⏰ 已逾期' },
-      { key: 'done', title: '✅ 已完成' }
+      { key: 'today', title: sectionTitles.today },
+      { key: 'future', title: sectionTitles.future },
+      { key: 'overdue', title: sectionTitles.overdue },
+      { key: 'done', title: sectionTitles.done }
     ];
-    $('todoCountHint').textContent = `共 ${state.todos.length} 条 · 待办 ${state.todos.filter(t=>t.status!=='已完成').length} 条`;
+    $('todoCountHint').textContent = lang === 'zh' ? `共 ${state.todos.length} 条 · 待办 ${state.todos.filter(t=>t.status!=='已完成').length} 条` : `${state.todos.length} todos · ${state.todos.filter(t=>t.status!=='已完成').length} open`;
     container.innerHTML = sections.map(s => {
       const items = secs[s.key].slice().sort((a,b) => (a.status==='已完成') - (b.status==='已完成') || prioNum(a.priority)-prioNum(b.priority) || (a.due||'').localeCompare(b.due||''));
       const html = items.map(t => todoItemHtml(t)).join('');
-      const placeholder = items.length ? '' : `<div class="empty">${s.key === 'done' ? '还没有完成记录' : '这里空空的'}</div>`;
+      const placeholder = items.length ? '' : `<div class="empty">${s.key === 'done' ? (lang === 'zh' ? '还没有完成记录' : 'No completed tasks yet') : (lang === 'zh' ? '这里空空的' : 'Nothing here')}</div>`;
       return `<div class="todo-col"><div class="col-title">${s.title} <span class="count">${items.length}</span></div>${html}${placeholder}</div>`;
     }).join('');
   }
@@ -1515,7 +1632,7 @@
   function renderHabits() {
     const list = $('habitList');
     if (!state.habits.length) {
-      list.innerHTML = '<div class="empty" style="grid-column:1/-1;">还没有习惯，从一个小目标开始吧</div>';
+      list.innerHTML = '<div class="empty" style="grid-column:1/-1;">' + (lang === 'zh' ? '还没有习惯，从一个小目标开始吧' : 'No habits yet. Start with a small goal!') + '</div>';
       return;
     }
     list.innerHTML = state.habits.map(h => {
@@ -1523,22 +1640,22 @@
       const checkedToday = records.includes(todayStr());
       const streak = checkedToday ? streakEnding(records, todayStr()) : streakEnding(records, addDays(todayStr(), -1));
       const dots = recentDays(records, 14).map(d => `<div class="day-dot ${d.on?'on':''}" title="${d.d}">${d.on?'✓':''}</div>`).join('');
-      const pausedBadge = h.paused ? '<span class="pill coral">已暂停</span>' : '';
+      const pausedBadge = h.paused ? '<span class="pill coral">' + (lang === 'zh' ? '已暂停' : 'Paused') + '</span>' : '';
       const action = h.paused
-        ? `<button class="btn btn-ghost btn-sm" data-resume-habit="${h.id}">恢复</button>`
+        ? `<button class="btn btn-ghost btn-sm" data-resume-habit="${h.id}">${lang === 'zh' ? '恢复' : 'Resume'}</button>`
         : checkedToday
-          ? `<button class="btn btn-light btn-sm" disabled>今日已打卡 ✓</button>`
-          : `<button class="btn btn-sm" data-check-habit="${h.id}">☑ 打卡</button>`;
+          ? `<button class="btn btn-light btn-sm" disabled>${lang === 'zh' ? '今日已打卡 ✓' : 'Checked today ✓'}</button>`
+          : `<button class="btn btn-sm" data-check-habit="${h.id}">${lang === 'zh' ? '☑ 打卡' : '☑ Check in'}</button>`;
       return `<div class="habit-card">
         <div class="habit-name"><span>🌸 ${esc(h.name)}</span> ${pausedBadge}</div>
         <div class="habit-stats">
-          <div class="stat"><div class="num">${streak}</div><div class="lbl">连续天数</div></div>
-          <div class="stat"><div class="num">${habitTotal(records)}</div><div class="lbl">总次数</div></div>
+          <div class="stat"><div class="num">${streak}</div><div class="lbl">${lang === 'zh' ? '连续天数' : 'Streak'}</div></div>
+          <div class="stat"><div class="num">${habitTotal(records)}</div><div class="lbl">${lang === 'zh' ? '总次数' : 'Total'}</div></div>
         </div>
         <div class="habit-days">${dots}</div>
         <div class="habit-actions">
-          ${h.paused ? '<button class="btn btn-light btn-sm" disabled>已暂停</button>' : '<button class="btn btn-light btn-sm" data-pause-habit="' + h.id + '">暂停</button>'}
-          <button class="inline-delete" data-del-habit="${h.id}" title="删除">✕</button>
+          ${h.paused ? '<button class="btn btn-light btn-sm" disabled>' + (lang === 'zh' ? '已暂停' : 'Paused') + '</button>' : '<button class="btn btn-light btn-sm" data-pause-habit="' + h.id + '">' + (lang === 'zh' ? '暂停' : 'Pause') + '</button>'}
+          <button class="inline-delete" data-del-habit="${h.id}" title="Delete">✕</button>
           ${action}
         </div>
       </div>`;
@@ -1913,6 +2030,10 @@
       applyTheme();
       toast(theme === 'dark' ? (lang === 'zh' ? '已切换深色主题' : 'Dark theme enabled') : (lang === 'zh' ? '已切换浅色主题' : 'Light theme enabled'));
     });
+    $('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem(SESSION_KEY);
+      location.reload();
+    });
     $('langToggle').addEventListener('click', () => {
       lang = lang === 'zh' ? 'en' : 'zh';
       try { localStorage.setItem(LANG_KEY, lang); } catch(e) {}
@@ -1932,8 +2053,35 @@
     $('pomodoroStart').addEventListener('click', startPomodoro);
     $('pomodoroPause').addEventListener('click', pausePomodoro);
     $('pomodoroReset').addEventListener('click', resetPomodoro);
-    $('pomodoroFocusMin').addEventListener('input', () => { if (!pomodoroRunning) { pomodoroRemaining = pomodoroFocusSec(); pomodoroMode = 'focus'; updatePomodoroUI(); } });
-    $('pomodoroBreakMin').addEventListener('input', () => { if (!pomodoroRunning) updatePomodoroUI(); });
+    ['pomodoroFocusH','pomodoroFocusM','pomodoroFocusS'].forEach(id => {
+      $(id).addEventListener('input', () => { if (!pomodoroRunning) { pomodoroRemaining = pomodoroFocusSec(); pomodoroMode = 'focus'; updatePomodoroUI(); } });
+    });
+    ['pomodoroBreakH','pomodoroBreakM','pomodoroBreakS'].forEach(id => {
+      $(id).addEventListener('input', () => { if (!pomodoroRunning) updatePomodoroUI(); });
+    });
+    $('alarmTestBtn').addEventListener('click', testAlarmSound);
+    $('alarmUploadBtn').addEventListener('click', () => $('alarmUploadFile').click());
+    $('alarmUploadFile').addEventListener('change', e => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      if (file.size > 2 * 1024 * 1024) {
+        toast(lang === 'zh' ? '音效文件不能超过 2MB' : 'Audio file must be under 2MB');
+        e.target.value = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = ev => {
+        try {
+          localStorage.setItem('huajian-alarm-custom', ev.target.result);
+          $('alarmSoundChoice').value = 'custom';
+          toast(lang === 'zh' ? '自定义音效已保存' : 'Custom sound saved');
+        } catch(err) {
+          toast(lang === 'zh' ? '音效保存失败，可能文件过大' : 'Failed to save sound; file may be too large');
+        }
+        e.target.value = '';
+      };
+      reader.readAsDataURL(file);
+    });
     $('notifyEnable').addEventListener('click', requestNotifyPermission);
     $('notificationBtn').addEventListener('click', () => $('notifyEnable').click());
     $('notifyTest').addEventListener('click', () => notifyBrowser(lang === 'zh' ? '🌸 花笺测试通知' : '🌸 Huajian test notification', lang === 'zh' ? '如果你看到这条，通知已经准备好了' : 'If you see this, notifications are ready'));
@@ -2056,7 +2204,109 @@
     save(); renderAll(); toast('已收藏这个第一次 ✨');
   }
 
-  function initialSetup() {
+  /* ---------- Local Login (single-file local accounts) ---------- */
+  const AUTH_USERS_KEY = 'huajian-auth-users-v1';
+  const SESSION_KEY = 'huajian-auth-session-v1';
+  let authBound = false;
+
+  function hashString(str) {
+    let h = 5381;
+    for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) | 0;
+    return 'h' + (h >>> 0).toString(36) + '_' + str.length;
+  }
+  function authUsers() {
+    try { return JSON.parse(localStorage.getItem(AUTH_USERS_KEY) || '{}'); } catch(e) { return {}; }
+  }
+  function saveAuthUsers(users) {
+    try { localStorage.setItem(AUTH_USERS_KEY, JSON.stringify(users)); } catch(e) {}
+  }
+  function userDataKey(username) {
+    return 'huajian-life-dashboard-v1-' + username;
+  }
+  function loadStateForUser(username) {
+    DATA_KEY = userDataKey(username);
+    const oldRaw = localStorage.getItem('huajian-life-dashboard-v1');
+    const userRaw = localStorage.getItem(DATA_KEY);
+    if (!userRaw && oldRaw) {
+      try {
+        const parsed = JSON.parse(oldRaw);
+        if (parsed && Array.isArray(parsed.todos)) localStorage.setItem(DATA_KEY, oldRaw);
+      } catch(e) {}
+    }
+    try {
+      state = Object.assign(defaultState(), JSON.parse(localStorage.getItem(DATA_KEY) || '{}'));
+    } catch(e) {
+      state = defaultState();
+    }
+    state.dates.forEach(normalizeDateRepeat);
+  }
+  function setAuthMsg(id, text) { $(id).textContent = text || ''; }
+  function bindAuthEvents() {
+    if (authBound) return;
+    authBound = true;
+    function showRegister() {
+      $('authLoginView').style.display = 'none';
+      $('authRegisterView').style.display = 'block';
+      setAuthMsg('authMessage',''); setAuthMsg('regMessage','');
+    }
+    function showLogin() {
+      $('authRegisterView').style.display = 'none';
+      $('authLoginView').style.display = 'block';
+      setAuthMsg('authMessage',''); setAuthMsg('regMessage','');
+    }
+    $('authGoRegister').addEventListener('click', showRegister);
+    $('authGoLogin').addEventListener('click', showLogin);
+
+    $('authLoginBtn').addEventListener('click', () => {
+      const u = $('authUsername').value.trim();
+      const p = $('authPassword').value;
+      const users = authUsers();
+      const rec = users[u];
+      if (!rec) { setAuthMsg('authMessage', lang === 'zh' ? '用户不存在，请先创建账号' : 'User not found. Please create an account.'); return; }
+      if (rec.hash !== hashString(rec.salt + p + u)) { setAuthMsg('authMessage', lang === 'zh' ? '密码不正确' : 'Incorrect password'); return; }
+      localStorage.setItem(SESSION_KEY, u);
+      loadStateForUser(u);
+      $('authMask').style.display = 'none';
+      startApp();
+    });
+    $('authRegisterBtn').addEventListener('click', () => {
+      const u = $('regUsername').value.trim();
+      const p = $('regPassword').value;
+      const p2 = $('regPassword2').value;
+      if (!u || !p) { setAuthMsg('regMessage', lang === 'zh' ? '用户名和密码不能为空' : 'Username and password are required'); return; }
+      if (p !== p2) { setAuthMsg('regMessage', lang === 'zh' ? '两次密码不一致' : 'Passwords do not match'); return; }
+      const users = authUsers();
+      if (users[u]) { setAuthMsg('regMessage', lang === 'zh' ? '用户名已存在' : 'Username already exists'); return; }
+      const salt = Math.random().toString(36).slice(2);
+      users[u] = { salt, hash: hashString(salt + p + u) };
+      saveAuthUsers(users);
+      localStorage.setItem(SESSION_KEY, u);
+      loadStateForUser(u);
+      $('authMask').style.display = 'none';
+      startApp();
+    });
+    // Enter key login/register
+    $('authPassword').addEventListener('keydown', e => { if (e.key === 'Enter') $('authLoginBtn').click(); });
+    $('regPassword2').addEventListener('keydown', e => { if (e.key === 'Enter') $('authRegisterBtn').click(); });
+  }
+  function startAuthFlow() {
+    const users = authUsers();
+    const session = localStorage.getItem(SESSION_KEY);
+    if (session && users[session]) {
+      loadStateForUser(session);
+      startApp();
+      return;
+    }
+    bindAuthEvents();
+    $('authMask').style.display = 'flex';
+    if (Object.keys(users).length === 0) {
+      $('authGoRegister').click();
+    } else {
+      $('authGoLogin').click();
+    }
+  }
+
+  function startApp() {
     try {
       lang = localStorage.getItem(LANG_KEY) || 'zh';
       theme = localStorage.getItem(THEME_KEY) || 'light';
@@ -2065,6 +2315,8 @@
     if (!['light','dark'].includes(theme)) theme = 'light';
     applyLang();
     applyTheme();
+    $('authMask').style.display = 'none';
+    $('logoutBtn').style.display = '';
     if (!$('budgetMonth').value) $('budgetMonth').value = todayStr().slice(0,7);
     if (!$('entryDate').value) $('entryDate').value = todayStr();
     if (!$('firstDate').value) $('firstDate').value = todayStr();
@@ -2080,7 +2332,7 @@
     setInterval(checkReminders, 60000);
   }
 
-  initialSetup();
+  startAuthFlow();
 })();
 </script>
 </body>
