@@ -341,6 +341,44 @@
     .wrap { padding: 16px 12px 70px; }
   }
 
+
+  /* New features: top actions, theme, stats, pomodoro, reminders */
+  .top-actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+  .top-actions .icon-text-btn {
+    display:inline-flex; align-items:center; gap:5px; background:rgba(255,255,255,.7);
+    border:1px solid var(--line); border-radius:999px; padding:6px 12px; font-size:13px;
+    cursor:pointer; color:var(--ink-green); font-family:inherit; transition:.15s; box-shadow:0 2px 8px rgba(0,0,0,.03);
+  }
+  .top-actions .icon-text-btn:hover { background:#fff; color:var(--green-dark); transform:translateY(-1px); }
+  body.theme-dark .top-actions .icon-text-btn { background:rgba(255,255,255,.06); color:#d9e6dc; border-color:#3d4e45; }
+  .tool-section { margin-top:22px; }
+  .tools-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:14px; }
+  .tool-card { background:var(--paper); border:1px solid #eee3d2; border-radius:18px; padding:14px 16px; box-shadow:0 4px 10px rgba(0,0,0,.03); }
+  .tool-card h3 { color:var(--green-dark); font-size:16px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .tool-card .sub { font-size:12px; color:var(--muted); margin-bottom:8px; }
+  .btn-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
+  .stat-bars { display:flex; flex-direction:column; gap:10px; }
+  .stat-bar-row .sb-label { font-size:12px; color:var(--muted); display:flex; justify-content:space-between; margin-bottom:3px; }
+  .stat-bar-row .bar { margin:0; }
+  .pomodoro-box { text-align:center; padding:8px 0; }
+  .pomodoro-time { font-size:48px; font-weight:800; color:var(--coral); line-height:1.2; }
+  .pomodoro-mode { color:var(--muted); font-size:13px; margin-bottom:8px; }
+  .hidden-file { display:none; }
+  .theme-dark {
+    --cream:#202823; --paper:#28352e; --ink-green:#a5d4b9; --green-dark:#dcebe1; --green-light:#374b41;
+    --coral:#ff9a86; --coral-light:#5a3b35; --gold:#d9b45b; --text:#e7efe8; --muted:#9daf9f;
+    --line:#3d4e45; --shadow:0 12px 30px rgba(0,0,0,.35);
+  }
+  body.theme-dark { background:var(--cream); }
+  body.theme-dark .module, body.theme-dark .mini-card, body.theme-dark .todo-col, body.theme-dark .todo-item,
+  body.theme-dark .habit-card, body.theme-dark .date-item, body.theme-dark .entry-row, body.theme-dark .first-card,
+  body.theme-dark .tool-card { background:rgba(38,48,42,.92); border-color:#3d4e45; color:var(--text); }
+  body.theme-dark .todo-form, body.theme-dark .budget-box, body.theme-dark .ledger-form, body.theme-dark .first-form,
+  body.theme-dark .date-add-form { background:#24312b; border-color:#3d4e45; }
+  body.theme-dark .btn-light { background:#34433b; color:var(--text); }
+  body.theme-dark input, body.theme-dark select, body.theme-dark textarea { background:#1f2a25; color:var(--text); border-color:#47584e; }
+  body.theme-dark .empty { background:rgba(255,255,255,.03); }
+
 </style>
 </head>
 <body>
@@ -352,19 +390,19 @@
     <button class="icon-btn" id="sidebarToggle" title="收起侧边栏">‹</button>
   </div>
   <div class="sidebar-controls">
-    <span>侧边栏位置</span>
-    <button class="side-btn active" id="sideLeft">◀ 左侧</button>
-    <button class="side-btn" id="sideRight">右侧 ▶</button>
+    <span data-i18n="sidebar.position">侧边栏位置</span>
+    <button class="side-btn active" id="sideLeft" data-i18n="sidebar.left">◀ 左侧</button>
+    <button class="side-btn" id="sideRight" data-i18n="sidebar.right">右侧 ▶</button>
   </div>
   <nav class="side-nav">
-    <a href="#module-overview"><span class="nav-emoji">🍀</span>今日总览</a>
-    <a href="#module-todo"><span class="nav-emoji">📝</span>待办事项</a>
-    <a href="#module-habit"><span class="nav-emoji">🌿</span>习惯打卡</a>
-    <a href="#module-dates"><span class="nav-emoji">💝</span>重要日期</a>
-    <a href="#module-ledger"><span class="nav-emoji">💰</span>生活费账本</a>
-    <a href="#module-first"><span class="nav-emoji">✨</span>人生第一次</a>
+    <a href="#module-overview"><span class="nav-emoji">🍀</span><span data-i18n="nav.overview">今日总览</span></a>
+    <a href="#module-todo"><span class="nav-emoji">📝</span><span data-i18n="nav.todo">待办事项</span></a>
+    <a href="#module-habit"><span class="nav-emoji">🌿</span><span data-i18n="nav.habit">习惯打卡</span></a>
+    <a href="#module-dates"><span class="nav-emoji">💝</span><span data-i18n="nav.dates">重要日期</span></a>
+    <a href="#module-ledger"><span class="nav-emoji">💰</span><span data-i18n="nav.ledger">生活费账本</span></a>
+    <a href="#module-first"><span class="nav-emoji">✨</span><span data-i18n="nav.first">人生第一次</span></a>
   </nav>
-  <div class="sidebar-foot">🌷 拖动边缘可调宽度 · 可切换左右</div>
+  <div class="sidebar-foot" data-i18n="sidebar.foot">🌷 拖动边缘可调宽度 · 可切换左右</div>
   <div class="resize-handle" id="resizeHandle" title="拖动调整宽度"></div>
 </aside>
 <div class="app-shell" id="appShell">
@@ -374,48 +412,110 @@
       <div class="brand-icon">🌸</div>
       <div>
         <h1>花笺 · 大学生活手记</h1>
-        <p>把日子写成温柔的书签 · 今日也请好好生活</p>
+        <p data-i18n="brand.sub">把日子写成温柔的书签 · 今日也请好好生活</p>
       </div>
     </div>
-    <div class="today-pill" id="todayPill"></div>
+    <div class="top-actions">
+      <button class="icon-text-btn" id="themeToggle" title="切换浅色/深色主题">🌓 <span data-i18n="header.theme">主题</span></button>
+      <button class="icon-text-btn" id="langToggle" title="切换语言 / Switch language">🌏 <span id="langToggleText">English</span></button>
+      <button class="icon-text-btn" id="notificationBtn" title="通知提醒">🔔 <span data-i18n="header.remind">提醒</span></button>
+      <div class="today-pill" id="todayPill"></div>
+    </div>
   </header>
 
   <!-- ① 今日总览 -->
   <section id="module-overview" class="grid overview-grid" style="margin-bottom:22px;">
     <div class="mini-card">
-      <div class="mini-label">📋 待办完成度</div>
+      <div class="mini-label" data-i18n="ov.todo">📋 待办完成度</div>
       <div class="mini-main" id="ovTodoPct">--</div>
       <div class="bar coral"><span id="ovTodoBar" style="width:0%"></span></div>
       <div class="mini-sub" id="ovTodoSub"></div>
     </div>
     <div class="mini-card">
-      <div class="mini-label">🌿 习惯打卡</div>
+      <div class="mini-label" data-i18n="ov.habit">🌿 习惯打卡</div>
       <div class="mini-main" id="ovHabit"></div>
       <div class="bar"><span id="ovHabitBar" style="width:0%"></span></div>
       <div class="mini-sub" id="ovHabitSub"></div>
     </div>
     <div class="mini-card">
-      <div class="mini-label">💝 最近纪念日</div>
+      <div class="mini-label" data-i18n="ov.date">💝 最近纪念日</div>
       <div class="mini-main" id="ovDateCount"></div>
       <div class="mini-sub"><span id="ovDateSub"></span> · 准备 <span id="ovDateProgress"></span></div>
     </div>
     <div class="mini-card">
-      <div class="mini-label">💰 本月预算</div>
+      <div class="mini-label" data-i18n="ov.budget">💰 本月预算</div>
       <div class="mini-main" id="ovBudgetPct">--</div>
       <div class="bar"><span id="ovBudgetBar" style="width:0%"></span></div>
       <div class="mini-sub" id="ovBudgetSub"></div>
     </div>
     <div class="mini-card">
-      <div class="mini-label">✨ 人生最新一次</div>
+      <div class="mini-label" data-i18n="ov.first">✨ 人生最新一次</div>
       <div class="mini-main" id="ovFirstTitle" style="font-size:18px; font-weight:700;">--</div>
       <div class="mini-sub" id="ovFirstSub"></div>
     </div>
   </section>
+  <!-- 新功能：效率工具 -->
+  <section id="module-tools" class="module" style="margin-bottom:22px;">
+    <div class="module-title">
+      <h2><span class="emoji">🧰</span><span data-i18n="tools.title">效率工具</span></h2>
+      <span class="tool" data-i18n="tools.subtitle">备份、统计、专注与提醒都在这里</span>
+    </div>
+    <div class="tools-grid">
+      <div class="tool-card">
+        <h3><span data-i18n="tools.data">📦 数据备份</span></h3>
+        <div class="sub" data-i18n="tools.dataDesc">导出为 JSON 文件，或从备份文件恢复</div>
+        <div class="btn-row">
+          <button class="btn btn-ghost btn-sm" id="exportBtn" data-i18n="tools.export">导出 JSON</button>
+          <button class="btn btn-light btn-sm" id="importBtn" data-i18n="tools.import">导入 JSON</button>
+          <input type="file" id="importFile" class="hidden-file" accept=".json,application/json">
+        </div>
+      </div>
+      <div class="tool-card">
+        <h3><span data-i18n="tools.stats">📊 数据小统计</span></h3>
+        <div class="stat-bars" id="statsBox">
+          <div class="stat-bar-row">
+            <div class="sb-label"><span data-i18n="stats.todo">待办完成</span><span id="statTodoPct">0%</span></div>
+            <div class="bar"><span id="statTodoBar" style="width:0%"></span></div>
+          </div>
+          <div class="stat-bar-row">
+            <div class="sb-label"><span data-i18n="stats.habit">今日习惯</span><span id="statHabitText">0/0</span></div>
+            <div class="bar coral"><span id="statHabitBar" style="width:0%"></span></div>
+          </div>
+          <div class="stat-bar-row">
+            <div class="sb-label"><span data-i18n="stats.budget">本月预算</span><span id="statBudgetText">0%</span></div>
+            <div class="bar"><span id="statBudgetBar" style="width:0%"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="tool-card">
+        <h3><span data-i18n="tools.focus">🍅 专注番茄钟</span></h3>
+        <div class="pomodoro-box">
+          <div class="pomodoro-mode" id="pomodoroMode" data-i18n="tools.ready">准备好开始一段专注了吗？</div>
+          <div class="pomodoro-time" id="pomodoroTime">25:00</div>
+        </div>
+        <div class="btn-row" style="justify-content:center;">
+          <button class="btn btn-sm" id="pomodoroStart" data-i18n="tools.start">开始</button>
+          <button class="btn btn-light btn-sm" id="pomodoroPause" disabled data-i18n="tools.pause">暂停</button>
+          <button class="btn btn-light btn-sm" id="pomodoroReset" data-i18n="tools.reset">重置</button>
+        </div>
+      </div>
+      <div class="tool-card">
+        <h3><span data-i18n="tools.remind">🔔 提醒与每日摘要</span></h3>
+        <div class="sub" id="notifyStatus" data-i18n="tools.notifyDesc">开启浏览器通知后，页面打开时会在后台检查提醒</div>
+        <div class="btn-row">
+          <button class="btn btn-ghost btn-sm" id="notifyEnable" data-i18n="tools.enableNotify">开启通知</button>
+          <button class="btn btn-light btn-sm" id="notifyTest" data-i18n="tools.testNotify">测试通知</button>
+          <button class="btn btn-light btn-sm" id="notifyDaily" data-i18n="tools.dailySummary">每日摘要</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ② 待办事项 -->
   <section class="module" id="module-todo" style="margin-bottom:22px;">
     <div class="module-title">
-      <h2><span class="emoji">📝</span>待办事项</h2>
-      <button class="btn btn-coral btn-sm" id="btnAddTodo">＋ 新增待办</button>
+      <h2><span class="emoji">📝</span><span data-i18n="module.todo">待办事项</span></h2>
+      <button class="btn btn-coral btn-sm" id="btnAddTodo" data-i18n="todo.add">＋ 新增待办</button>
     </div>
 
     <div class="todo-form closed" id="todoForm">
@@ -453,8 +553,8 @@
   <!-- ③ 习惯打卡 -->
   <section class="module" id="module-habit" style="margin-bottom:22px;">
     <div class="module-title">
-      <h2><span class="emoji">🌿</span>习惯打卡</h2>
-      <span class="tool">每天点亮一朵小花，连续的日子会连成花环</span>
+      <h2><span class="emoji">🌿</span><span data-i18n="module.habit">习惯打卡</span></h2>
+      <span class="tool" data-i18n="habit.tool">每天点亮一朵小花，连续的日子会连成花环</span>
     </div>
     <div class="habit-controls">
       <div class="field"><label class="field-label">新习惯名称</label><input id="habitName" placeholder="例如：背 30 个单词"></div>
@@ -466,8 +566,8 @@
   <!-- ④ 重要日期 -->
   <section class="module" id="module-dates" style="margin-bottom:22px;">
     <div class="module-title">
-      <h2><span class="emoji">💝</span>重要日期</h2>
-      <span class="tool">把期待写在倒计时里，准备也在一点点完成</span>
+      <h2><span class="emoji">💝</span><span data-i18n="module.dates">重要日期</span></h2>
+      <span class="tool" data-i18n="dates.tool">把期待写在倒计时里，准备也在一点点完成</span>
     </div>
     <div class="date-layout">
       <div class="countdown-hero" id="dateHero"></div>
@@ -514,8 +614,8 @@
   <!-- ⑤ 生活费账本 -->
   <section class="module" id="module-ledger" style="margin-bottom:22px;">
     <div class="module-title">
-      <h2><span class="emoji">💰</span>生活费账本</h2>
-      <span class="tool">输入说明「食堂午餐」会自动归类为餐饮</span>
+      <h2><span class="emoji">💰</span><span data-i18n="module.ledger">生活费账本</span></h2>
+      <span class="tool" data-i18n="ledger.tool">输入说明「食堂午餐」会自动归类为餐饮</span>
     </div>
     <div class="ledger-layout">
       <div>
@@ -561,8 +661,8 @@
   <!-- ⑥ 人生第一次 -->
   <section class="module" id="module-first">
     <div class="module-title">
-      <h2><span class="emoji">✨</span>人生第一次</h2>
-      <span class="tool">第一次也许很小，但都值得郑重收藏</span>
+      <h2><span class="emoji">✨</span><span data-i18n="module.first">人生第一次</span></h2>
+      <span class="tool" data-i18n="first.tool">第一次也许很小，但都值得郑重收藏</span>
     </div>
     <div class="first-layout">
       <div class="first-form">
@@ -660,6 +760,125 @@
 
   const $ = id => document.getElementById(id);
   let editingTodoId = null;
+  /* ---------- Theme & Language (light / dark, 中文 / English) ---------- */
+  const LANG_KEY = 'huajian-lang-v1';
+  const THEME_KEY = 'huajian-theme-v1';
+  let lang = 'zh';
+  let theme = 'light';
+  const I18N = {
+    zh: {
+      'brand.sub':'把日子写成温柔的书签 · 今日也请好好生活',
+      'header.theme':'主题', 'header.remind':'提醒',
+      'sidebar.position':'侧边栏位置', 'sidebar.left':'◀ 左侧', 'sidebar.right':'右侧 ▶',
+      'sidebar.foot':'🌷 拖动边缘可调宽度 · 可切换左右',
+      'nav.overview':'今日总览', 'nav.todo':'待办事项', 'nav.habit':'习惯打卡', 'nav.dates':'重要日期', 'nav.ledger':'生活费账本', 'nav.first':'人生第一次',
+      'ov.todo':'📋 待办完成度', 'ov.habit':'🌿 习惯打卡', 'ov.date':'💝 最近纪念日', 'ov.budget':'💰 本月预算', 'ov.first':'✨ 人生最新一次',
+      'module.todo':'📝 待办事项', 'module.habit':'🌿 习惯打卡', 'module.dates':'💝 重要日期', 'module.ledger':'💰 生活费账本', 'module.first':'✨ 人生第一次',
+      'tools.title':'🧰 效率工具', 'tools.subtitle':'备份、统计、专注与提醒都在这里',
+      'tools.data':'📦 数据备份', 'tools.dataDesc':'导出为 JSON 文件，或从备份文件恢复', 'tools.export':'导出 JSON', 'tools.import':'导入 JSON',
+      'tools.stats':'📊 数据小统计', 'stats.todo':'待办完成', 'stats.habit':'今日习惯', 'stats.budget':'本月预算',
+      'tools.focus':'🍅 专注番茄钟', 'tools.ready':'准备好开始一段专注了吗？', 'tools.start':'开始', 'tools.pause':'暂停', 'tools.reset':'重置',
+      'tools.remind':'🔔 提醒与每日摘要', 'tools.notifyDesc':'开启浏览器通知后，页面打开时会在后台检查提醒',
+      'tools.enableNotify':'开启通知', 'tools.testNotify':'测试通知', 'tools.dailySummary':'每日摘要',
+      'todo.add':'＋ 新增待办', 'todo.addTitle':'新增待办', 'todo.name':'任务名称 *', 'todo.type':'所属类型', 'todo.due':'截止日期', 'todo.priority':'优先级', 'todo.status':'状态', 'todo.hours':'预计耗时（小时）', 'todo.repeat':'是否重复', 'todo.cycle':'周期性提醒', 'todo.note':'备注', 'todo.cancel':'取消', 'todo.save':'保存待办', 'todo.edit':'编辑待办', 'todo.delete':'删除', 'todo.saveShort':'保存', 'todo.filter':'按类型筛选', 'todo.all':'全部类型', 'todo.today':'今日', 'todo.future':'未来 7 天', 'todo.overdue':'已逾期', 'todo.done':'已完成',
+      'habit.title':'🌿 习惯打卡', 'habit.tool':'每天点亮一朵小花，连续的日子会连成花环', 'habit.new':'新习惯名称', 'habit.add':'＋ 新增习惯', 'habit.pause':'暂停', 'habit.resume':'恢复', 'habit.check':'☑ 打卡', 'habit.doneToday':'今日已打卡 ✓', 'habit.streak':'连续天数', 'habit.total':'总次数', 'habit.paused':'已暂停',
+      'dates.title':'💝 重要日期', 'dates.tool':'把期待写在倒计时里，准备也在一点点完成', 'dates.add':'✚ 添加重要日期', 'dates.addHint':'重复可自定义', 'dates.name':'名称 *', 'dates.type':'类型', 'dates.date':'起始日期 *', 'dates.repeat':'重复规则', 'dates.every':'每', 'dates.everyUnit':'天/周/月/年', 'dates.customHint':'重复一次（仅“自定义间隔”时生效）', 'dates.addBtn':'＋ 添加',
+      'ledger.title':'💰 生活费账本', 'ledger.tool':'输入说明「食堂午餐」会自动归类为餐饮', 'ledger.budget':'🎯 月预算设置', 'ledger.month':'预算月份', 'ledger.amount':'预算金额', 'ledger.saveBudget':'保存预算', 'ledger.used':'已使用', 'ledger.leftDays':'剩余天数', 'ledger.daily':'日均可用', 'ledger.entry':'记一笔', 'ledger.date':'日期', 'ledger.incomeType':'收支类型', 'ledger.category':'消费分类', 'ledger.money':'金额 *', 'ledger.pay':'支付方式', 'ledger.desc':'消费说明（试试“食堂午餐”）', 'ledger.add':'记入账本', 'ledger.records':'📒 流水记录',
+      'first.title':'✨ 人生第一次', 'first.tool':'第一次也许很小，但都值得郑重收藏', 'first.add':'记录一个新第一次', 'first.name':'事件名称 *', 'first.category':'分类', 'first.date':'日期', 'first.desc':'一句话描述', 'first.save':'收藏这个第一次'
+    },
+
+    en: {
+      'brand.sub':'Turning days into gentle bookmarks · live well today',
+      'header.theme':'Theme', 'header.remind':'Remind',
+      'sidebar.position':'Sidebar side', 'sidebar.left':'◀ Left', 'sidebar.right':'Right ▶',
+      'sidebar.foot':'🌷 Drag the edge to resize · Switch left/right',
+      'nav.overview':'Overview', 'nav.todo':'Todos', 'nav.habit':'Habits', 'nav.dates':'Dates', 'nav.ledger':'Ledger', 'nav.first':'First Times',
+      'ov.todo':'📋 Todo Progress', 'ov.habit':'🌿 Habit Check-ins', 'ov.date':'💝 Next Special Day', 'ov.budget':'💰 Monthly Budget', 'ov.first':'✨ Latest First Time',
+      'module.todo':'📝 Todos', 'module.habit':'🌿 Habit Tracking', 'module.dates':'💝 Important Dates', 'module.ledger':'💰 Expense Ledger', 'module.first':'✨ First-Time Experiences',
+      'tools.title':'🧰 Utility Tools', 'tools.subtitle':'Backup, stats, focus timer, and reminders',
+      'tools.data':'📦 Data Backup', 'tools.dataDesc':'Export data to JSON, or restore from a backup file', 'tools.export':'Export JSON', 'tools.import':'Import JSON',
+      'tools.stats':'📊 Quick Statistics', 'stats.todo':'Todos done', 'stats.habit':'Habits today', 'stats.budget':'Budget used',
+      'tools.focus':'🍅 Focus Timer', 'tools.ready':'Ready to start a focus session?', 'tools.start':'Start', 'tools.pause':'Pause', 'tools.reset':'Reset',
+      'tools.remind':'🔔 Reminders & Daily Summary', 'tools.notifyDesc':'After enabling notifications, reminders are checked while the page is open',
+      'tools.enableNotify':'Enable Notifications', 'tools.testNotify':'Test Notification', 'tools.dailySummary':'Daily Summary',
+      'todo.add':'＋ Add Todo', 'todo.addTitle':'New Todo', 'todo.name':'Task name *', 'todo.type':'Type', 'todo.due':'Due date', 'todo.priority':'Priority', 'todo.status':'Status', 'todo.hours':'Est. hours', 'todo.repeat':'Repeat', 'todo.cycle':'Recurring reminder', 'todo.note':'Note', 'todo.cancel':'Cancel', 'todo.save':'Save Todo', 'todo.edit':'Edit Todo', 'todo.delete':'Delete', 'todo.saveShort':'Save', 'todo.filter':'Filter by type', 'todo.all':'All types', 'todo.today':'Today', 'todo.future':'Next 7 Days', 'todo.overdue':'Overdue', 'todo.done':'Completed',
+      'habit.title':'🌿 Habit Tracking', 'habit.tool':'Light a small flower every day; continuous days become a garland', 'habit.new':'New habit name', 'habit.add':'＋ Add Habit', 'habit.pause':'Pause', 'habit.resume':'Resume', 'habit.check':'☑ Check in', 'habit.doneToday':'Checked today ✓', 'habit.streak':'Streak', 'habit.total':'Total', 'habit.paused':'Paused',
+      'dates.title':'💝 Important Dates', 'dates.tool':'Write expectations into countdowns; preparations grow day by day', 'dates.add':'✚ Add Important Date', 'dates.addHint':'Custom repeat available', 'dates.name':'Name *', 'dates.type':'Type', 'dates.date':'Start date *', 'dates.repeat':'Repeat rule', 'dates.every':'Every', 'dates.everyUnit':'day/week/month/year', 'dates.customHint':'Repeats once (only for Custom interval)', 'dates.addBtn':'＋ Add',
+      'ledger.title':'💰 Expense Ledger', 'ledger.tool':'Entering “食堂午餐” auto-categorizes as Dining', 'ledger.budget':'🎯 Monthly Budget', 'ledger.month':'Budget month', 'ledger.amount':'Budget amount', 'ledger.saveBudget':'Save Budget', 'ledger.used':'Used', 'ledger.leftDays':'Days left', 'ledger.daily':'Daily available', 'ledger.entry':'Add Entry', 'ledger.date':'Date', 'ledger.incomeType':'Income/Expense', 'ledger.category':'Category', 'ledger.money':'Amount *', 'ledger.pay':'Payment method', 'ledger.desc':'Description (try “食堂午餐”)', 'ledger.add':'Add Entry', 'ledger.records':'📒 Entries',
+      'first.title':'✨ First-Time Experiences', 'first.tool':'First times can be small, yet still worth treasuring', 'first.add':'Record a New First', 'first.name':'Event name *', 'first.category':'Category', 'first.date':'Date', 'first.desc':'One-line description', 'first.save':'Save First Experience'
+    }
+  };
+
+  const TEXT_MAP = {
+    '主题':'Theme', '提醒':'Remind', '侧边栏位置':'Sidebar side', '◀ 左侧':'◀ Left', '右侧 ▶':'Right ▶',
+    '今日总览':'Overview', '待办事项':'Todos', '习惯打卡':'Habit Tracking', '重要日期':'Important Dates', '生活费账本':'Expense Ledger', '人生第一次':'First-Time Experiences',
+    '待办完成度':'Todo Progress', '习惯打卡':'Habits', '最近纪念日':'Next Special Day', '本月预算':'Monthly Budget', '人生最新一次':'Latest First Time',
+    '效率工具':'Utility Tools', '备份、统计、专注与提醒都在这里':'Backup, stats, focus timer, and reminders',
+    '数据备份':'Data Backup', '导出为 JSON 文件，或从备份文件恢复':'Export data to JSON, or restore from a backup file', '导出 JSON':'Export JSON', '导入 JSON':'Import JSON',
+    '数据小统计':'Quick Statistics', '待办完成':'Todos done', '今日习惯':'Habits today', '本月预算':'Budget used',
+    '专注番茄钟':'Focus Timer', '准备好开始一段专注了吗？':'Ready to start a focus session?', '开始':'Start', '暂停':'Pause', '重置':'Reset',
+    '提醒与每日摘要':'Reminders & Daily Summary', '开启浏览器通知后，页面打开时会在后台检查提醒':'After enabling notifications, reminders are checked while the page is open',
+    '开启通知':'Enable Notifications', '测试通知':'Test Notification', '每日摘要':'Daily Summary',
+    '＋ 新增待办':'＋ Add Todo', '新增待办':'New Todo', '任务名称 *':'Task name *', '所属类型':'Type', '截止日期':'Due date', '优先级':'Priority', '状态':'Status', '预计耗时（小时）':'Est. hours', '是否重复':'Repeat', '周期性提醒':'Recurring reminder', '备注':'Note', '取消':'Cancel', '保存待办':'Save Todo', '编辑待办':'Edit Todo', '删除':'Delete', '保存':'Save', '按类型筛选':'Filter by type', '全部类型':'All types', '今日':'Today', '未来 7 天':'Next 7 Days', '已逾期':'Overdue', '已完成':'Completed',
+    '每天点亮一朵小花，连续的日子会连成花环':'Light a small flower every day; continuous days become a garland', '新习惯名称':'New habit name', '＋ 新增习惯':'＋ Add Habit', '连续天数':'Streak', '总次数':'Total', '今日已打卡 ✓':'Checked today ✓', '已暂停':'Paused',
+    '把期待写在倒计时里，准备也在一点点完成':'Write expectations into countdowns; preparations grow day by day', '✚ 添加重要日期':'✚ Add Important Date', '重复可自定义':'Custom repeat available', '名称 *':'Name *', '类型':'Type', '起始日期 *':'Start date *', '重复规则':'Repeat rule', '每':'Every', '天':'Day', '周':'Week', '月':'Month', '年':'Year', '重复一次（仅“自定义间隔”时生效）':'Repeats once (only for Custom interval)', '＋ 添加':'＋ Add',
+    '输入说明「食堂午餐」会自动归类为餐饮':'Entering “食堂午餐” auto-categorizes as Dining', '🎯 月预算设置':'🎯 Monthly Budget', '预算月份':'Budget month', '预算金额':'Budget amount', '保存预算':'Save Budget', '已使用':'Used', '剩余天数':'Days left', '日均可用':'Daily available', '记一笔':'Add Entry', '日期':'Date', '收支类型':'Income/Expense', '消费分类':'Category', '金额 *':'Amount *', '支付方式':'Payment method', '消费说明（试试“食堂午餐”）':'Description (try “食堂午餐”)', '记入账本':'Add Entry', '📒 流水记录':'📒 Entries',
+    '第一次也许很小，但都值得郑重收藏':'First times can be small, yet still worth treasuring', '记录一个新第一次':'Record a New First', '事件名称 *':'Event name *', '分类':'Category', '一句话描述':'One-line description', '收藏这个第一次':'Save First Experience',
+    '学习':'Study', '自媒体':'Content', '杂事':'Misc', '未开始':'Not started', '进行中':'In progress', '已完成':'Done', '已延期':'Postponed', '生日':'Birthday', '纪念日':'Anniversary', '节日':'Festival', '其他':'Other', '不重复':'No repeat', '每天':'Daily', '每周':'Weekly', '每月':'Monthly', '每年':'Yearly', '自定义间隔…':'Custom interval…', '餐饮':'Dining', '交通':'Transport', '娱乐':'Fun', '购物':'Shopping', '住宿':'Housing', '微信':'WeChat', '支付宝':'Alipay', '现金':'Cash', '银行卡':'Bank card', '支出':'Expense', '收入':'Income', '旅行':'Travel', '生活':'Life', '社交':'Social', '成长':'Growth', '每年重复（默认）':'Yearly (default)', '不重复（只提醒一次）':'No repeat (one-time)', '每月重复':'Monthly', '每周重复':'Weekly', '每天重复':'Daily'
+  };
+
+
+  function translateStatic() {
+    // First translate elements carrying explicit data-i18n keys
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (I18N[lang] && I18N[lang][key]) el.textContent = I18N[lang][key];
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      const key = el.getAttribute('data-i18n-placeholder');
+      if (I18N[lang] && I18N[lang][key]) el.setAttribute('placeholder', I18N[lang][key]);
+    });
+    // Then translate remaining exact Chinese UI texts / restore them when switching back
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    if (lang === 'en') {
+      nodes.forEach(node => {
+        const raw = node.nodeValue || '';
+        const text = raw.trim();
+        if (text && TEXT_MAP[text]) {
+          node.nodeValue = raw.replace(text, TEXT_MAP[text]);
+        }
+      });
+    } else {
+      const EN_TO_ZH = Object.fromEntries(Object.entries(TEXT_MAP).map(([zh, en]) => [en, zh]));
+      nodes.forEach(node => {
+        const raw = node.nodeValue || '';
+        const text = raw.trim();
+        if (text && EN_TO_ZH[text]) {
+          node.nodeValue = raw.replace(text, EN_TO_ZH[text]);
+        }
+      });
+    }
+    const langBtn = document.getElementById('langToggleText');
+    if (langBtn) langBtn.textContent = lang === 'zh' ? 'English' : '中文';
+  }
+  function t(key) { return (I18N[lang] && I18N[lang][key]) || key; }
+  function applyLang() {
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    translateStatic();
+  }
+  function applyTheme() {
+    document.body.classList.toggle('theme-dark', theme === 'dark');
+    const btn = document.getElementById('themeToggle');
+    if (btn) {
+      btn.innerHTML = theme === 'dark'
+        ? '☀️ <span data-i18n="header.theme">' + (lang === 'zh' ? '主题' : 'Theme') + '</span>'
+        : '🌓 <span data-i18n="header.theme">' + (lang === 'zh' ? '主题' : 'Theme') + '</span>';
+    }
+    translateStatic();
+  }
+
 
   /* ---------- Sidebar ---------- */
   const SIDEBAR_LS = 'huajian-sidebar-v1';
@@ -853,6 +1072,177 @@
   }
 
   /* ---------- Rendering ---------- */
+  /* ---------- Data Export/Import, Stats, Pomodoro, Notifications ---------- */
+  function renderToolsStats() {
+    if (!$('statTodoPct')) return;
+    const totalTodos = state.todos.length;
+    const doneTodos = state.todos.filter(t => t.status === '已完成').length;
+    const todoPct = totalTodos ? Math.round(doneTodos / totalTodos * 100) : 0;
+    $('statTodoPct').textContent = todoPct + '%';
+    $('statTodoBar').style.width = todoPct + '%';
+    const activeHabits = state.habits.filter(h => !h.paused);
+    const checkedToday = activeHabits.filter(h => (h.records || []).includes(todayStr())).length;
+    $('statHabitText').textContent = activeHabits.length ? `${checkedToday} / ${activeHabits.length}` : '0 / 0';
+    $('statHabitBar').style.width = activeHabits.length ? (checkedToday / activeHabits.length * 100) + '%' : '0%';
+    const budgetMonth = $('budgetMonth') ? ($('budgetMonth').value || todayStr().slice(0,7)) : todayStr().slice(0,7);
+    const budget = state.budgets[budgetMonth];
+    const expense = getMonthExpenseTotal(budgetMonth);
+    const budgetPct = budget ? Math.min(100, Math.round(expense / budget * 100)) : 0;
+    $('statBudgetText').textContent = budget ? budgetPct + '%' : '--';
+    $('statBudgetBar').style.width = (budget ? budgetPct : 0) + '%';
+  }
+
+  function exportData() {
+    const payload = JSON.stringify({ app: 'huajian-life-dashboard', exportedAt: new Date().toISOString(), state }, null, 2);
+    const blob = new Blob([payload], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'huajian-backup-' + todayStr() + '.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast(lang === 'zh' ? '已导出备份 JSON' : 'Backup JSON exported');
+  }
+
+  function importData(file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const parsed = JSON.parse(e.target.result);
+        const raw = parsed && parsed.state ? parsed.state : parsed;
+        if (!raw || !Array.isArray(raw.todos)) throw new Error('invalid');
+        state = Object.assign(defaultState(), raw);
+        state.dates.forEach(normalizeDateRepeat);
+        save();
+        renderAll();
+        toast(lang === 'zh' ? '数据导入成功' : 'Data imported successfully');
+      } catch (err) {
+        toast(lang === 'zh' ? '导入失败：文件格式不正确' : 'Import failed: invalid file');
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  /* Pomodoro */
+  let pomodoroTimer = null;
+  let pomodoroRemaining = 25 * 60;
+  let pomodoroRunning = false;
+  let pomodoroMode = 'focus';
+
+  function fmtTime(sec) {
+    const m = String(Math.floor(sec / 60)).padStart(2, '0');
+    const s = String(sec % 60).padStart(2, '0');
+    return m + ':' + s;
+  }
+  function updatePomodoroUI() {
+    $('pomodoroTime').textContent = fmtTime(pomodoroRemaining);
+    $('pomodoroStart').disabled = pomodoroRunning;
+    $('pomodoroPause').disabled = !pomodoroRunning;
+    $('pomodoroMode').textContent = pomodoroMode === 'focus'
+      ? (lang === 'zh' ? '专注中 · 25 分钟' : 'Focusing · 25 minutes')
+      : (lang === 'zh' ? '休息一下 · 5 分钟' : 'Break time · 5 minutes');
+  }
+  function startPomodoro() {
+    if (pomodoroRunning) return;
+    pomodoroRunning = true;
+    pomodoroTimer = setInterval(() => {
+      pomodoroRemaining--;
+      if (pomodoroRemaining <= 0) {
+        clearInterval(pomodoroTimer);
+        pomodoroRunning = false;
+        if (pomodoroMode === 'focus') {
+          pomodoroMode = 'break';
+          pomodoroRemaining = 5 * 60;
+          notifyBrowser(lang === 'zh' ? '🍅 专注完成' : '🍅 Focus complete', lang === 'zh' ? '休息 5 分钟吧' : 'Take a 5-minute break');
+        } else {
+          pomodoroMode = 'focus';
+          pomodoroRemaining = 25 * 60;
+          notifyBrowser(lang === 'zh' ? '☕ 休息结束' : '☕ Break over', lang === 'zh' ? '开始下一轮专注吧' : 'Start another focus session');
+        }
+      }
+      updatePomodoroUI();
+    }, 1000);
+    updatePomodoroUI();
+  }
+  function pausePomodoro() {
+    pomodoroRunning = false;
+    if (pomodoroTimer) clearInterval(pomodoroTimer);
+    pomodoroTimer = null;
+    updatePomodoroUI();
+  }
+  function resetPomodoro() {
+    pausePomodoro();
+    pomodoroMode = 'focus';
+    pomodoroRemaining = 25 * 60;
+    updatePomodoroUI();
+  }
+
+  /* Notifications */
+  function notifyBrowser(title, body) {
+    if (!('Notification' in window)) {
+      toast(lang === 'zh' ? '当前浏览器不支持通知' : 'This browser does not support notifications');
+      return;
+    }
+    if (Notification.permission === 'granted') {
+      try { new Notification(title, { body }); } catch(e) {}
+    } else if (Notification.permission === 'default') {
+      toast(lang === 'zh' ? '请先开启通知权限' : 'Please enable notification permission first');
+    }
+  }
+  function buildDailySummary() {
+    const dueToday = state.todos.filter(t => t.status !== '已完成' && t.due === todayStr());
+    const habitsNotChecked = state.habits.filter(h => !h.paused && !(h.records || []).includes(todayStr()));
+    const ups = upcomingDates();
+    let lines = [];
+    if (dueToday.length) lines.push((lang === 'zh' ? '今日待办 ' : 'Todos today: ') + dueToday.length + (lang === 'zh' ? ' 件' : ''));
+    if (habitsNotChecked.length) lines.push((lang === 'zh' ? '还有 ' : 'Remaining habits: ') + habitsNotChecked.length + (lang === 'zh' ? ' 个习惯未打卡' : ''));
+    if (ups.length) lines.push((lang === 'zh' ? '最近重要日期：' : 'Next important date: ') + ups[0].name + (ups[0].days === 0 ? (lang === 'zh' ? '（就是今天）' : ' (today)') : ' (' + ups[0].days + (lang === 'zh' ? ' 天后)' : ' days)')));
+    return lines.length ? lines.join('\n') : (lang === 'zh' ? '今天一切都在轨道上 ✨' : 'Everything is on track today ✨');
+  }
+  function requestNotifyPermission() {
+    if (!('Notification' in window)) {
+      toast(lang === 'zh' ? '当前浏览器不支持通知' : 'Browser notifications unsupported');
+      return;
+    }
+    Notification.requestPermission().then(p => {
+      if (p === 'granted') {
+        new Notification(lang === 'zh' ? '花笺通知已开启' : 'Huajian notifications enabled', { body: lang === 'zh' ? '我们会温柔地提醒你重要的事情 🌸' : 'We will gently remind you of important things 🌸' });
+      } else {
+        toast(lang === 'zh' ? '通知权限未开启' : 'Notification permission denied');
+      }
+    });
+  }
+
+  function checkReminders() {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    try {
+      const lastDate = localStorage.getItem('huajian-remind-date') || '';
+      if (lastDate === todayStr()) return;
+      const dueToday = state.todos.filter(t => t.status !== '已完成' && t.due === todayStr());
+      const habitsLeft = state.habits.filter(h => !h.paused && !(h.records || []).includes(todayStr()));
+      const ups = upcomingDates();
+      let title = '';
+      let body = '';
+      if (dueToday.length) {
+        title = lang === 'zh' ? '📝 今天有截止待办' : '📝 Todos due today';
+        body = dueToday.slice(0, 3).map(t => t.name).join('、');
+      } else if (habitsLeft.length) {
+        title = lang === 'zh' ? '🌿 别忘了今天的习惯' : '🌿 Don\'t forget today\'s habits';
+        body = habitsLeft.slice(0, 3).map(h => h.name).join('、');
+      } else if (ups.length && ups[0].days <= 3) {
+        title = lang === 'zh' ? '💝 重要日子临近' : '💝 Special day coming soon';
+        body = ups[0].name + ' (' + ups[0].days + (lang === 'zh' ? ' 天后)' : ' days)');
+      }
+      if (title) {
+        try { new Notification(title, { body }); } catch(e) {}
+        localStorage.setItem('huajian-remind-date', todayStr());
+      }
+    } catch(e) {}
+  }
+
+
   function renderAll() {
     renderOverview();
     renderTodos();
@@ -860,7 +1250,9 @@
     renderDates();
     renderLedger();
     renderFirsts();
-    $('todayPill').textContent = '今日 ' + formatDate(todayStr()) + ' · 宜认真生活';
+    renderToolsStats();
+    $('todayPill').textContent = (lang === 'zh' ? '今日 ' : 'Today ') + formatDate(todayStr()) + (lang === 'zh' ? ' · 宜认真生活' : ' · live well');
+    translateStatic();
   }
 
   /* ① 今日总览 */
@@ -1457,6 +1849,36 @@
     });
     $('entryCategory').disabled = $('entryType').value === '收入';
 
+    // Theme / Language / Tools
+    $('themeToggle').addEventListener('click', () => {
+      theme = theme === 'dark' ? 'light' : 'dark';
+      try { localStorage.setItem(THEME_KEY, theme); } catch(e) {}
+      applyTheme();
+      toast(theme === 'dark' ? (lang === 'zh' ? '已切换深色主题' : 'Dark theme enabled') : (lang === 'zh' ? '已切换浅色主题' : 'Light theme enabled'));
+    });
+    $('langToggle').addEventListener('click', () => {
+      lang = lang === 'zh' ? 'en' : 'zh';
+      try { localStorage.setItem(LANG_KEY, lang); } catch(e) {}
+      applyLang();
+      renderAll();
+      updateDateRepeatUI();
+      updatePomodoroUI();
+      translateStatic();
+      toast(lang === 'zh' ? '已切换为中文' : 'Switched to English');
+    });
+    $('exportBtn').addEventListener('click', exportData);
+    $('importBtn').addEventListener('click', () => $('importFile').click());
+    $('importFile').addEventListener('change', e => {
+      if (e.target.files && e.target.files[0]) importData(e.target.files[0]);
+      e.target.value = '';
+    });
+    $('pomodoroStart').addEventListener('click', startPomodoro);
+    $('pomodoroPause').addEventListener('click', pausePomodoro);
+    $('pomodoroReset').addEventListener('click', resetPomodoro);
+    $('notifyEnable').addEventListener('click', requestNotifyPermission);
+    $('notifyTest').addEventListener('click', () => notifyBrowser(lang === 'zh' ? '🌸 花笺测试通知' : '🌸 Huajian test notification', lang === 'zh' ? '如果你看到这条，通知已经准备好了' : 'If you see this, notifications are ready'));
+    $('notifyDaily').addEventListener('click', () => notifyBrowser(lang === 'zh' ? '📋 每日摘要' : '📋 Daily Summary', buildDailySummary()));
+
     // First defaults
     $('firstDate').value = todayStr();
   }
@@ -1575,6 +1997,14 @@
   }
 
   function initialSetup() {
+    try {
+      lang = localStorage.getItem(LANG_KEY) || 'zh';
+      theme = localStorage.getItem(THEME_KEY) || 'light';
+    } catch(e) {}
+    if (!['zh','en'].includes(lang)) lang = 'zh';
+    if (!['light','dark'].includes(theme)) theme = 'light';
+    applyLang();
+    applyTheme();
     if (!$('budgetMonth').value) $('budgetMonth').value = todayStr().slice(0,7);
     if (!$('entryDate').value) $('entryDate').value = todayStr();
     if (!$('firstDate').value) $('firstDate').value = todayStr();
@@ -1584,7 +2014,9 @@
     resetTodoForm();
     initSidebar();
     renderAll();
+    translateStatic();
     bindEvents();
+    setInterval(checkReminders, 60000);
   }
 
   initialSetup();
