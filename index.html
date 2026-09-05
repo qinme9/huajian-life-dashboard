@@ -361,6 +361,9 @@
   .stat-bar-row .sb-label { font-size:12px; color:var(--muted); display:flex; justify-content:space-between; margin-bottom:3px; }
   .stat-bar-row .bar { margin:0; }
   .pomodoro-box { text-align:center; padding:8px 0; }
+  .pomodoro-settings { display:flex; gap:10px; justify-content:center; margin:6px 0 8px; flex-wrap:wrap; }
+  .pomodoro-settings label { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:var(--muted); }
+  .pomodoro-settings input { width:70px; padding:5px 8px; }
   .pomodoro-time { font-size:48px; font-weight:800; color:var(--coral); line-height:1.2; }
   .pomodoro-mode { color:var(--muted); font-size:13px; margin-bottom:8px; }
   .hidden-file { display:none; }
@@ -396,6 +399,7 @@
   </div>
   <nav class="side-nav">
     <a href="#module-overview"><span class="nav-emoji">🍀</span><span data-i18n="nav.overview">今日总览</span></a>
+    <a href="#module-tools"><span class="nav-emoji">🧰</span><span data-i18n="nav.tools">效率工具</span></a>
     <a href="#module-todo"><span class="nav-emoji">📝</span><span data-i18n="nav.todo">待办事项</span></a>
     <a href="#module-habit"><span class="nav-emoji">🌿</span><span data-i18n="nav.habit">习惯打卡</span></a>
     <a href="#module-dates"><span class="nav-emoji">💝</span><span data-i18n="nav.dates">重要日期</span></a>
@@ -492,6 +496,10 @@
         <div class="pomodoro-box">
           <div class="pomodoro-mode" id="pomodoroMode" data-i18n="tools.ready">准备好开始一段专注了吗？</div>
           <div class="pomodoro-time" id="pomodoroTime">25:00</div>
+          <div class="pomodoro-settings">
+            <label>🍅 专注 <input type="number" id="pomodoroFocusMin" min="1" max="180" value="25"> min</label>
+            <label>☕ 休息 <input type="number" id="pomodoroBreakMin" min="1" max="60" value="5"> min</label>
+          </div>
         </div>
         <div class="btn-row" style="justify-content:center;">
           <button class="btn btn-sm" id="pomodoroStart" data-i18n="tools.start">开始</button>
@@ -771,7 +779,7 @@
       'header.theme':'主题', 'header.remind':'提醒',
       'sidebar.position':'侧边栏位置', 'sidebar.left':'◀ 左侧', 'sidebar.right':'右侧 ▶',
       'sidebar.foot':'🌷 拖动边缘可调宽度 · 可切换左右',
-      'nav.overview':'今日总览', 'nav.todo':'待办事项', 'nav.habit':'习惯打卡', 'nav.dates':'重要日期', 'nav.ledger':'生活费账本', 'nav.first':'人生第一次',
+      'nav.overview':'今日总览', 'nav.tools':'效率工具', 'nav.todo':'待办事项', 'nav.habit':'习惯打卡', 'nav.dates':'重要日期', 'nav.ledger':'生活费账本', 'nav.first':'人生第一次',
       'ov.todo':'📋 待办完成度', 'ov.habit':'🌿 习惯打卡', 'ov.date':'💝 最近纪念日', 'ov.budget':'💰 本月预算', 'ov.first':'✨ 人生最新一次',
       'module.todo':'📝 待办事项', 'module.habit':'🌿 习惯打卡', 'module.dates':'💝 重要日期', 'module.ledger':'💰 生活费账本', 'module.first':'✨ 人生第一次',
       'tools.title':'🧰 效率工具', 'tools.subtitle':'备份、统计、专注与提醒都在这里',
@@ -792,7 +800,7 @@
       'header.theme':'Theme', 'header.remind':'Remind',
       'sidebar.position':'Sidebar side', 'sidebar.left':'◀ Left', 'sidebar.right':'Right ▶',
       'sidebar.foot':'🌷 Drag the edge to resize · Switch left/right',
-      'nav.overview':'Overview', 'nav.todo':'Todos', 'nav.habit':'Habits', 'nav.dates':'Dates', 'nav.ledger':'Ledger', 'nav.first':'First Times',
+      'nav.overview':'Overview', 'nav.tools':'Tools', 'nav.todo':'Todos', 'nav.habit':'Habits', 'nav.dates':'Dates', 'nav.ledger':'Ledger', 'nav.first':'First Times',
       'ov.todo':'📋 Todo Progress', 'ov.habit':'🌿 Habit Check-ins', 'ov.date':'💝 Next Special Day', 'ov.budget':'💰 Monthly Budget', 'ov.first':'✨ Latest First Time',
       'module.todo':'📝 Todos', 'module.habit':'🌿 Habit Tracking', 'module.dates':'💝 Important Dates', 'module.ledger':'💰 Expense Ledger', 'module.first':'✨ First-Time Experiences',
       'tools.title':'🧰 Utility Tools', 'tools.subtitle':'Backup, stats, focus timer, and reminders',
@@ -1131,6 +1139,12 @@
   let pomodoroRunning = false;
   let pomodoroMode = 'focus';
 
+  function pomodoroFocusSec() {
+    return Math.max(1, parseInt($('pomodoroFocusMin').value, 10) || 25) * 60;
+  }
+  function pomodoroBreakSec() {
+    return Math.max(1, parseInt($('pomodoroBreakMin').value, 10) || 5) * 60;
+  }
   function fmtTime(sec) {
     const m = String(Math.floor(sec / 60)).padStart(2, '0');
     const s = String(sec % 60).padStart(2, '0');
@@ -1140,12 +1154,24 @@
     $('pomodoroTime').textContent = fmtTime(pomodoroRemaining);
     $('pomodoroStart').disabled = pomodoroRunning;
     $('pomodoroPause').disabled = !pomodoroRunning;
-    $('pomodoroMode').textContent = pomodoroMode === 'focus'
-      ? (lang === 'zh' ? '专注中 · 25 分钟' : 'Focusing · 25 minutes')
-      : (lang === 'zh' ? '休息一下 · 5 分钟' : 'Break time · 5 minutes');
+    if (pomodoroRunning) {
+      $('pomodoroMode').textContent = pomodoroMode === 'focus'
+        ? (lang === 'zh' ? '专注中 · ' + (pomodoroRemaining / 60 | 0) + ' 分钟' : 'Focusing · ' + (pomodoroRemaining / 60 | 0) + ' min')
+        : (lang === 'zh' ? '休息中 · ' + (pomodoroRemaining / 60 | 0) + ' 分钟' : 'Break · ' + (pomodoroRemaining / 60 | 0) + ' min');
+    } else {
+      $('pomodoroMode').textContent = pomodoroMode === 'focus'
+        ? (lang === 'zh' ? '准备好专注 ' + (pomodoroFocusSec() / 60) + ' 分钟了吗？' : 'Ready to focus for ' + (pomodoroFocusSec() / 60) + ' minutes?')
+        : (lang === 'zh' ? '休息 ' + (pomodoroBreakSec() / 60) + ' 分钟吧' : 'Take a ' + (pomodoroBreakSec() / 60) + '-minute break');
+    }
   }
   function startPomodoro() {
     if (pomodoroRunning) return;
+    // If idle and user changed settings, apply the latest setting to the current round
+    if (pomodoroMode === 'focus' && pomodoroRemaining === pomodoroFocusSec()) {
+      // already synced
+    } else if (!pomodoroRunning && pomodoroRemaining === 25 * 60 && pomodoroMode === 'focus') {
+      pomodoroRemaining = pomodoroFocusSec();
+    }
     pomodoroRunning = true;
     pomodoroTimer = setInterval(() => {
       pomodoroRemaining--;
@@ -1154,11 +1180,11 @@
         pomodoroRunning = false;
         if (pomodoroMode === 'focus') {
           pomodoroMode = 'break';
-          pomodoroRemaining = 5 * 60;
-          notifyBrowser(lang === 'zh' ? '🍅 专注完成' : '🍅 Focus complete', lang === 'zh' ? '休息 5 分钟吧' : 'Take a 5-minute break');
+          pomodoroRemaining = pomodoroBreakSec();
+          notifyBrowser(lang === 'zh' ? '🍅 专注完成' : '🍅 Focus complete', lang === 'zh' ? '休息 ' + (pomodoroBreakSec() / 60) + ' 分钟吧' : 'Take a ' + (pomodoroBreakSec() / 60) + '-minute break');
         } else {
           pomodoroMode = 'focus';
-          pomodoroRemaining = 25 * 60;
+          pomodoroRemaining = pomodoroFocusSec();
           notifyBrowser(lang === 'zh' ? '☕ 休息结束' : '☕ Break over', lang === 'zh' ? '开始下一轮专注吧' : 'Start another focus session');
         }
       }
@@ -1175,20 +1201,39 @@
   function resetPomodoro() {
     pausePomodoro();
     pomodoroMode = 'focus';
-    pomodoroRemaining = 25 * 60;
+    pomodoroRemaining = pomodoroFocusSec();
     updatePomodoroUI();
   }
 
   /* Notifications */
+  function notifyStatusText() {
+    if (!('Notification' in window)) return lang === 'zh' ? '当前浏览器不支持通知，可用站内提醒' : 'Notifications unsupported; in-page reminders still work';
+    if (Notification.permission === 'granted') return lang === 'zh' ? '✅ 通知已开启' : '✅ Notifications enabled';
+    if (Notification.permission === 'denied') return lang === 'zh' ? '❌ 通知被浏览器阻止，请在浏览器设置中允许本站通知' : '❌ Notifications blocked; allow this site in browser settings';
+    return lang === 'zh' ? '🔕 通知未开启，点击上方按钮授权' : '🔕 Notifications off; click the button above to enable';
+  }
+  function updateNotifyUI() {
+    const el = $('notifyStatus');
+    if (el) el.textContent = notifyStatusText();
+    const btn = $('notifyEnable');
+    if (btn) {
+      const granted = 'Notification' in window && Notification.permission === 'granted';
+      btn.textContent = granted ? (lang === 'zh' ? '通知已开启' : 'Notifications On') : (lang === 'zh' ? '开启通知' : 'Enable Notifications');
+      btn.disabled = granted;
+      btn.style.opacity = granted ? '0.6' : '';
+    }
+  }
   function notifyBrowser(title, body) {
     if (!('Notification' in window)) {
-      toast(lang === 'zh' ? '当前浏览器不支持通知' : 'This browser does not support notifications');
+      toast(lang === 'zh' ? '当前浏览器不支持通知，已改用站内提醒' : 'Notifications unsupported; using in-page reminder');
       return;
     }
     if (Notification.permission === 'granted') {
       try { new Notification(title, { body }); } catch(e) {}
     } else if (Notification.permission === 'default') {
       toast(lang === 'zh' ? '请先开启通知权限' : 'Please enable notification permission first');
+    } else {
+      toast(lang === 'zh' ? '通知权限被浏览器阻止，请在浏览器设置中允许' : 'Notification blocked; allow this site in browser settings');
     }
   }
   function buildDailySummary() {
@@ -1203,16 +1248,28 @@
   }
   function requestNotifyPermission() {
     if (!('Notification' in window)) {
-      toast(lang === 'zh' ? '当前浏览器不支持通知' : 'Browser notifications unsupported');
+      toast(lang === 'zh' ? '当前浏览器不支持通知，可使用站内提醒' : 'Notifications unsupported');
+      updateNotifyUI();
+      return;
+    }
+    if (Notification.permission === 'denied') {
+      updateNotifyUI();
+      toast(lang === 'zh' ? '通知已被浏览器阻止，请在地址栏/网站设置中允许通知' : 'Notifications are blocked. Allow this site in browser settings');
+      return;
+    }
+    if (Notification.permission === 'granted') {
+      updateNotifyUI();
+      new Notification(lang === 'zh' ? '花笺通知已开启' : 'Huajian notifications enabled', { body: lang === 'zh' ? '我们会温柔地提醒你重要的事情 🌸' : 'We will gently remind you of important things 🌸' });
       return;
     }
     Notification.requestPermission().then(p => {
+      updateNotifyUI();
       if (p === 'granted') {
         new Notification(lang === 'zh' ? '花笺通知已开启' : 'Huajian notifications enabled', { body: lang === 'zh' ? '我们会温柔地提醒你重要的事情 🌸' : 'We will gently remind you of important things 🌸' });
       } else {
-        toast(lang === 'zh' ? '通知权限未开启' : 'Notification permission denied');
+        toast(lang === 'zh' ? '通知权限未开启，可继续使用站内提醒' : 'Notification permission not granted; in-page reminders still work');
       }
-    });
+    }).catch(() => updateNotifyUI());
   }
 
   function checkReminders() {
@@ -1875,7 +1932,10 @@
     $('pomodoroStart').addEventListener('click', startPomodoro);
     $('pomodoroPause').addEventListener('click', pausePomodoro);
     $('pomodoroReset').addEventListener('click', resetPomodoro);
+    $('pomodoroFocusMin').addEventListener('input', () => { if (!pomodoroRunning) { pomodoroRemaining = pomodoroFocusSec(); pomodoroMode = 'focus'; updatePomodoroUI(); } });
+    $('pomodoroBreakMin').addEventListener('input', () => { if (!pomodoroRunning) updatePomodoroUI(); });
     $('notifyEnable').addEventListener('click', requestNotifyPermission);
+    $('notificationBtn').addEventListener('click', () => $('notifyEnable').click());
     $('notifyTest').addEventListener('click', () => notifyBrowser(lang === 'zh' ? '🌸 花笺测试通知' : '🌸 Huajian test notification', lang === 'zh' ? '如果你看到这条，通知已经准备好了' : 'If you see this, notifications are ready'));
     $('notifyDaily').addEventListener('click', () => notifyBrowser(lang === 'zh' ? '📋 每日摘要' : '📋 Daily Summary', buildDailySummary()));
 
@@ -2016,6 +2076,7 @@
     renderAll();
     translateStatic();
     bindEvents();
+    updateNotifyUI();
     setInterval(checkReminders, 60000);
   }
 
