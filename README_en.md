@@ -55,7 +55,7 @@ A warm and healing college-life dashboard. Single-file HTML, no installation or 
 
 ## Usage
 
-- Open `index.html` directly
+- Open `花笺手机版.html` for the mobile version, or `花笺电脑版.html` for the desktop version
 - Or deploy it to GitHub Pages for online use
 - Data is stored in the browser `localStorage`
 - The sidebar can be placed on the left or right and resized by dragging
