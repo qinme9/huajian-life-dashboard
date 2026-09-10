@@ -130,9 +130,7 @@
   .bar.coral > span { background: linear-gradient(90deg, var(--coral), #f5aa8d); }
 
   /* Modules stacked */
-  .main-modules { grid-template-columns: 1fr; }
-  .two-col { grid-template-columns: 1.2fr .9fr; }
-  @media (max-width: 1280px) { .overview-grid { grid-template-columns: repeat(3,1fr); } .two-col { grid-template-columns: 1fr; } }
+  @media (max-width: 1280px) { .overview-grid { grid-template-columns: repeat(3,1fr); } }
   @media (max-width: 760px) { .wrap { padding: 16px; } .overview-grid { grid-template-columns: 1fr; } .brand h1 { font-size: 24px; } }
   /* Todo */
   .todo-filter-bar { display:flex; flex-wrap:wrap; align-items:center; gap: 10px; margin-bottom: 16px; }
@@ -274,7 +272,6 @@
   .icon-btn { background:none; border:none; cursor:pointer; font-size:14px; padding:4px 7px; border-radius:10px; color:var(--muted); }
   .icon-btn:hover { background:#f0e7db; color:var(--green-dark); }
   .muted { color: var(--muted); }
-  .recent-line { font-size: 13px; }
 
   /* Sidebar */
   :root { --sidebar-w: 270px; }
@@ -394,25 +391,6 @@
   body.theme-dark input, body.theme-dark select, body.theme-dark textarea { background:#1f2a25; color:var(--text); border-color:#47584e; }
   body.theme-dark .empty { background:rgba(255,255,255,.03); }
 
-  /* Auth login */
-  .auth-mask {
-    position:fixed; inset:0; background:var(--cream); z-index:200;
-    display:flex; align-items:center; justify-content:center; padding:20px;
-  }
-  .auth-card {
-    background:var(--paper); border:1px solid var(--line); border-radius:26px;
-    box-shadow:var(--shadow); padding:30px; width:100%; max-width:420px;
-  }
-  .auth-card .auth-logo { font-size:42px; text-align:center; margin-bottom:8px; }
-  .auth-card h1 { text-align:center; color:var(--green-dark); font-size:24px; letter-spacing:2px; margin-bottom:4px; }
-  .auth-card .auth-sub { text-align:center; color:var(--muted); font-size:13px; margin-bottom:18px; }
-  .auth-card .field { margin-bottom:12px; }
-  .auth-card .btn { width:100%; margin-top:4px; }
-  .auth-card .auth-switch { text-align:center; margin-top:14px; font-size:13px; color:var(--muted); }
-  .auth-card .auth-switch button { background:none; border:none; color:var(--coral); cursor:pointer; font-family:inherit; font-size:13px; }
-  .auth-msg { min-height:18px; font-size:12px; color:var(--coral); text-align:center; margin:6px 0; }
-
-
   /* Single-file hash multi-page mode */
   .side-nav a.active { background: var(--green-light); color: var(--green-dark); transform: translateX(3px); }
   body[data-app-page="home"] #module-todo,
@@ -523,6 +501,93 @@
   body:not([data-app-page="memos"]) #module-memos,
   #module-memos { display:block !important; }
 
+
+  @media (max-width: 900px) {
+    input, select, textarea { font-size: 16px; }
+    body.blur-auto .module, body.blur-auto .modal-mask { backdrop-filter: none; }
+    button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+  }
+
+
+  /* Settings */
+  .settings-mask {
+    position:fixed; inset:0; background:rgba(40,52,45,.32); z-index:120;
+    display:none; align-items:center; justify-content:center; padding:20px;
+  }
+  .settings-mask.show { display:flex; }
+  .settings-card {
+    width:100%; max-width:430px; max-height:86vh; overflow:auto;
+    background:var(--paper); border:1px solid var(--line); border-radius:24px;
+    box-shadow:0 24px 60px rgba(0,0,0,.22); padding:22px;
+  }
+  .settings-card h3 { color:var(--green-dark); font-size:20px; margin-bottom:14px; }
+  .setting-row {
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:13px 0; border-bottom:1px dashed var(--line);
+  }
+  .setting-row:last-of-type { border-bottom:none; }
+  .setting-row strong { display:block; font-size:14px; color:var(--text); }
+  .setting-row small { display:block; font-size:12px; color:var(--muted); margin-top:2px; line-height:1.45; }
+  .setting-row select { width:auto; min-width:104px; }
+  .switch { position:relative; display:inline-block; width:48px; height:28px; flex:0 0 48px; }
+  .switch input { opacity:0; width:0; height:0; }
+  .switch span { position:absolute; inset:0; background:#d8d0c3; border-radius:999px; transition:.2s; }
+  .switch span::before { content:""; position:absolute; width:22px; height:22px; left:3px; top:3px; background:#fff; border-radius:50%; transition:.2s; box-shadow:0 2px 5px rgba(0,0,0,.18); }
+  .switch input:checked + span { background:var(--ink-green); }
+  .switch input:checked + span::before { transform:translateX(20px); }
+  body.motion-off .switch span, body.motion-off .switch span::before { transition:none !important; }
+  .settings-actions { display:flex; justify-content:flex-end; margin-top:8px; }
+  body.no-blur .module,
+  body.no-blur .modal-mask,
+  body.no-blur .settings-mask { backdrop-filter:none !important; }
+  body.blur-on .module,
+  body.blur-on .modal-mask { backdrop-filter:blur(2px) !important; }
+  body.motion-off *, body.motion-off *::before, body.motion-off *::after {
+    animation:none !important; transition:none !important;
+  }
+  body.motion-off, body.motion-off * { scroll-behavior:auto !important; }
+  @media (max-width:900px) {
+    .settings-card { padding:18px; border-radius:20px; }
+    .setting-row select { font-size:16px; }
+  }
+
+
+  /* Density options */
+  body.density-compact .module { padding:14px 16px; }
+  body.density-compact .grid,
+  body.density-compact .overview-grid,
+  body.density-compact .tools-grid,
+  body.density-compact .todo-columns,
+  body.density-compact .habit-grid { gap:12px; }
+  body.density-compact .mini-card { padding:12px; }
+  body.density-compact .todo-col { padding:8px; }
+  body.density-compact .todo-item,
+  body.density-compact .habit-card,
+  body.density-compact .date-item,
+  body.density-compact .first-card,
+  body.density-compact .milestone-card,
+  body.density-compact .memo-card,
+  body.density-compact .tool-card { padding:10px 12px; }
+  body.density-compact .module-title { margin-bottom:10px; padding-bottom:6px; }
+  body.density-wide .module { padding:26px 28px; }
+  body.density-wide .grid,
+  body.density-wide .overview-grid,
+  body.density-wide .tools-grid,
+  body.density-wide .todo-columns,
+  body.density-wide .habit-grid { gap:28px; }
+  body.density-wide .mini-card { padding:20px; }
+  body.density-wide .todo-item,
+  body.density-wide .habit-card,
+  body.density-wide .date-item,
+  body.density-wide .first-card,
+  body.density-wide .milestone-card,
+  body.density-wide .memo-card,
+  body.density-wide .tool-card { padding:16px; }
+  body.density-wide .module-title { margin-bottom:20px; }
+
 </style>
 </head>
 <body>
@@ -565,8 +630,8 @@
     <div class="top-actions">
       <button class="icon-text-btn" id="themeToggle" title="切换浅色/深色主题">🌓 <span data-i18n="header.theme">主题</span></button>
       <button class="icon-text-btn" id="langToggle" title="切换语言 / Switch language">🌏 <span id="langToggleText">English</span></button>
+      <button class="icon-text-btn" id="settingsBtn" title="设置"><span>⚙️</span> <span data-i18n="header.settings">设置</span></button>
       <button class="icon-text-btn" id="notificationBtn" title="通知提醒">🔔 <span data-i18n="header.remind">提醒</span></button>
-      <button class="icon-text-btn" id="logoutBtn" style="display:none;" title="退出登录">🚪 <span data-i18n="header.logout">退出</span></button>
       <div class="today-pill" id="todayPill"></div>
     </div>
   </header>
@@ -935,6 +1000,94 @@
   </div>
 </div>
 
+<div class="settings-mask" id="settingsMask">
+  <div class="settings-card">
+    <h3 data-i18n="settings.title">⚙️ 设置</h3>
+    <div class="setting-row">
+      <div>
+        <strong data-i18n="settings.motion">动画效果</strong>
+        <small data-i18n="settings.motionDesc">关闭后减少页面过渡和动画，提升流畅度</small>
+      </div>
+      <label class="switch" title="开关动画">
+        <input type="checkbox" id="settingMotion" checked>
+        <span></span>
+      </label>
+    </div>
+    <div class="setting-row">
+      <div>
+        <strong data-i18n="settings.blur">毛玻璃效果</strong>
+        <small data-i18n="settings.blurDesc">自动：手机端关闭，电脑端保留；也可强制开启或关闭</small>
+      </div>
+      <select id="settingBlur">
+        <option value="auto" data-i18n="settings.blurAuto">自动</option>
+        <option value="on" data-i18n="settings.blurOn">开启</option>
+        <option value="off" data-i18n="settings.blurOff">关闭</option>
+      </select>
+    </div>
+    <div class="setting-row">
+      <div>
+        <strong data-i18n="settings.theme">主题模式</strong>
+        <small data-i18n="settings.themeDesc">浅色 / 深色 / 跟随系统</small>
+      </div>
+      <select id="settingTheme">
+        <option value="auto" data-i18n="settings.themeAuto">跟随系统</option>
+        <option value="light" data-i18n="settings.themeLight">浅色</option>
+        <option value="dark" data-i18n="settings.themeDark">深色</option>
+      </select>
+    </div>
+    <div class="setting-row">
+      <div>
+        <strong data-i18n="settings.lang">界面语言</strong>
+        <small data-i18n="settings.langDesc">中文 / English</small>
+      </div>
+      <select id="settingLang">
+        <option value="zh" data-i18n="settings.langZh">中文</option>
+        <option value="en" data-i18n="settings.langEn">English</option>
+      </select>
+    </div>
+    <div class="setting-row">
+      <div>
+        <strong data-i18n="settings.density">界面密度</strong>
+        <small data-i18n="settings.densityDesc">宽松 / 标准 / 紧凑</small>
+      </div>
+      <select id="settingDensity">
+        <option value="wide" data-i18n="settings.densityWide">宽松</option>
+        <option value="normal" data-i18n="settings.densityNormal">标准</option>
+        <option value="compact" data-i18n="settings.densityCompact">紧凑</option>
+      </select>
+    </div>
+    <div class="setting-row">
+      <div>
+        <strong data-i18n="settings.sidebarSide">侧边栏位置</strong>
+        <small data-i18n="settings.sidebarDesc">左侧或右侧显示</small>
+      </div>
+      <select id="settingSidebarSide">
+        <option value="left" data-i18n="settings.sidebarLeft">左侧</option>
+        <option value="right" data-i18n="settings.sidebarRight">右侧</option>
+      </select>
+    </div>
+    <div class="setting-row">
+      <div>
+        <strong data-i18n="settings.mobileStart">手机版启动页</strong>
+        <small data-i18n="settings.mobileStartDesc">手机版打开时默认进入的页面</small>
+      </div>
+      <select id="settingMobileStart">
+        <option value="home" data-i18n="settings.pageHome">首页</option>
+        <option value="todo" data-i18n="settings.pageTodo">待办</option>
+        <option value="habit" data-i18n="settings.pageHabit">习惯</option>
+        <option value="dates" data-i18n="settings.pageDates">重要日期</option>
+        <option value="ledger" data-i18n="settings.pageLedger">账本</option>
+        <option value="first" data-i18n="settings.pageFirst">人生第一次</option>
+        <option value="milestones" data-i18n="settings.pageMilestones">大事记</option>
+        <option value="memos" data-i18n="settings.pageMemos">备忘录</option>
+      </select>
+    </div>
+    <div class="settings-actions">
+      <button class="btn btn-light btn-sm" id="settingClearData" data-i18n="settings.clearData" style="margin-right:auto; color:#c14e3c;">清空所有数据</button>
+      <button class="btn btn-light btn-sm" id="settingsClose" data-i18n="settings.close">关闭</button>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -998,12 +1151,95 @@
   /* ---------- Theme & Language (light / dark, 中文 / English) ---------- */
   const LANG_KEY = 'huajian-lang-v1';
   const THEME_KEY = 'huajian-theme-v1';
+  const THEME_MODE_KEY = 'huajian-theme-mode-v1';
+  const SETTINGS_KEY = 'huajian-settings-v1';
+  let appSettings = { motion: true, blur: 'auto', density: 'normal', mobileStart: 'home' };
+  let settingsBound = false;
+  function loadSettings() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
+      appSettings = Object.assign({ motion: true, blur: 'auto', density: 'normal', mobileStart: 'home' }, raw);
+    } catch(e) {}
+    if (typeof appSettings.motion !== 'boolean') appSettings.motion = true;
+    if (!['auto','on','off'].includes(appSettings.blur)) appSettings.blur = 'auto';
+    if (!['wide','normal','compact'].includes(appSettings.density)) appSettings.density = 'normal';
+    if (!['home','todo','habit','dates','ledger','first','milestones','memos'].includes(appSettings.mobileStart)) appSettings.mobileStart = 'home';
+  }
+  function saveSettings() {
+    try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(appSettings)); } catch(e) {}
+  }
+  function applySettings() {
+    document.body.classList.toggle('motion-off', !appSettings.motion);
+    document.body.classList.remove('blur-auto', 'blur-on', 'no-blur', 'density-wide', 'density-compact');
+    document.body.classList.add(appSettings.blur === 'auto' ? 'blur-auto' : appSettings.blur === 'on' ? 'blur-on' : 'no-blur');
+    if (appSettings.density === 'compact') document.body.classList.add('density-compact');
+    if (appSettings.density === 'wide') document.body.classList.add('density-wide');
+  }
+  function updateSettingsUI() {
+    if ($('settingMotion')) $('settingMotion').checked = !!appSettings.motion;
+    if ($('settingBlur')) $('settingBlur').value = appSettings.blur;
+    if ($('settingDensity')) $('settingDensity').value = appSettings.density;
+    if ($('settingMobileStart')) $('settingMobileStart').value = appSettings.mobileStart;
+    if ($('settingTheme')) $('settingTheme').value = themeMode;
+    if ($('settingLang')) $('settingLang').value = lang;
+    if ($('settingSidebarSide')) $('settingSidebarSide').value = sidebarPref.side;
+  }
+  function bindSettingsEvents() {
+    if (settingsBound) return;
+    settingsBound = true;
+    const mask = $('settingsMask');
+    $('settingsBtn').addEventListener('click', () => mask.classList.add('show'));
+    $('settingsClose').addEventListener('click', () => mask.classList.remove('show'));
+    mask.addEventListener('click', e => { if (e.target === mask) mask.classList.remove('show'); });
+    $('settingMotion').addEventListener('change', () => { appSettings.motion = $('settingMotion').checked; saveSettings(); applySettings(); });
+    $('settingBlur').addEventListener('change', () => { appSettings.blur = $('settingBlur').value; saveSettings(); applySettings(); });
+    $('settingDensity').addEventListener('change', () => { appSettings.density = $('settingDensity').value; saveSettings(); applySettings(); });
+    $('settingMobileStart').addEventListener('change', () => { appSettings.mobileStart = $('settingMobileStart').value; saveSettings(); });
+    $('settingTheme').addEventListener('change', () => {
+      themeMode = $('settingTheme').value;
+      try { localStorage.setItem(THEME_MODE_KEY, themeMode); } catch(e) {}
+      applyTheme();
+    });
+    $('settingLang').addEventListener('change', () => {
+      lang = $('settingLang').value;
+      try { localStorage.setItem(LANG_KEY, lang); } catch(e) {}
+      applyLang(); renderAll(); updateDateRepeatUI(); updatePomodoroUI(); translateStatic(); updateSettingsUI();
+    });
+    $('settingSidebarSide').addEventListener('change', () => {
+      sidebarPref.side = $('settingSidebarSide').value;
+      saveSidebarPref(); applySidebar(); updateSettingsUI();
+    });
+    $('settingClearData').addEventListener('click', () => {
+      const ok = confirm(lang === 'zh' ? '确定要清空所有本地数据吗？此操作不可恢复！' : 'Clear all local data? This cannot be undone.');
+      if (!ok) return;
+      try {
+        Object.keys(localStorage).forEach(k => { if (k.indexOf('huajian-') === 0) localStorage.removeItem(k); });
+      } catch(e) {}
+      location.reload();
+    });
+  }
+
+  function initSettings() {
+    loadSettings();
+    applySettings();
+    updateSettingsUI();
+    bindSettingsEvents();
+    if (window.matchMedia) {
+      const mq = window.matchMedia('(prefers-color-scheme: dark)');
+      const onSystemThemeChange = () => { if (themeMode === 'auto') applyTheme(); };
+      if (mq.addEventListener) mq.addEventListener('change', onSystemThemeChange);
+      else if (mq.addListener) mq.addListener(onSystemThemeChange);
+    }
+  }
+
   let lang = 'zh';
   let theme = 'light';
+  let themeMode = 'light';
+  let textMapDirty = false;
   const I18N = {
     zh: {
       'brand.sub':'把日子写成温柔的书签 · 今日也请好好生活',
-      'header.theme':'主题', 'header.remind':'提醒', 'header.logout':'退出',
+      'header.theme':'主题', 'header.remind':'提醒', 'header.settings':'设置',
       'sidebar.position':'侧边栏位置', 'sidebar.left':'◀ 左侧', 'sidebar.right':'右侧 ▶',
       'sidebar.foot':'🌷 拖动边缘可调宽度 · 可切换左右',
       'nav.overview':'今日总览', 'nav.tools':'效率工具', 'nav.todo':'待办事项', 'nav.milestones':'大事记', 'nav.memos':'备忘录', 'nav.habit':'习惯打卡', 'nav.dates':'重要日期', 'nav.ledger':'生活费账本', 'nav.first':'人生第一次',
@@ -1019,12 +1255,12 @@
       'habit.title':'🌿 习惯打卡', 'habit.tool':'每天点亮一朵小花，连续的日子会连成花环', 'habit.new':'新习惯名称', 'habit.add':'＋ 新增习惯', 'habit.pause':'暂停', 'habit.resume':'恢复', 'habit.check':'☑ 打卡', 'habit.doneToday':'今日已打卡 ✓', 'habit.streak':'连续天数', 'habit.total':'总次数', 'habit.paused':'已暂停',
       'dates.title':'💝 重要日期', 'dates.tool':'把期待写在倒计时里，准备也在一点点完成', 'dates.add':'✚ 添加重要日期', 'dates.addHint':'重复可自定义', 'dates.name':'名称 *', 'dates.type':'类型', 'dates.date':'起始日期 *', 'dates.repeat':'重复规则', 'dates.every':'每', 'dates.everyUnit':'天/周/月/年', 'dates.customHint':'重复一次（仅“自定义间隔”时生效）', 'dates.addBtn':'＋ 添加',
       'ledger.title':'💰 生活费账本', 'ledger.tool':'输入说明「食堂午餐」会自动归类为餐饮', 'ledger.budget':'🎯 月预算设置', 'ledger.month':'预算月份', 'ledger.amount':'预算金额', 'ledger.saveBudget':'保存预算', 'ledger.used':'已使用', 'ledger.leftDays':'剩余天数', 'ledger.daily':'日均可用', 'ledger.entry':'记一笔', 'ledger.date':'日期', 'ledger.incomeType':'收支类型', 'ledger.category':'消费分类', 'ledger.money':'金额 *', 'ledger.pay':'支付方式', 'ledger.desc':'消费说明（试试“食堂午餐”）', 'ledger.add':'记入账本', 'ledger.records':'📒 流水记录',
-      'first.title':'✨ 人生第一次', 'first.tool':'第一次也许很小，但都值得郑重收藏', 'first.add':'记录一个新第一次', 'first.name':'事件名称 *', 'first.category':'分类', 'first.date':'日期', 'first.desc':'一句话描述', 'first.save':'收藏这个第一次'
+      'first.title':'✨ 人生第一次', 'first.tool':'第一次也许很小，但都值得郑重收藏', 'first.add':'记录一个新第一次', 'first.name':'事件名称 *', 'first.category':'分类', 'first.date':'日期', 'first.desc':'一句话描述', 'first.save':'收藏这个第一次', 'settings.title':'⚙️ 设置', 'settings.motion':'动画效果', 'settings.motionDesc':'关闭后减少页面过渡和动画，提升流畅度', 'settings.blur':'毛玻璃效果', 'settings.blurDesc':'自动：手机端关闭，电脑端保留；也可强制开启或关闭', 'settings.blurAuto':'自动', 'settings.blurOn':'开启', 'settings.blurOff':'关闭', 'settings.close':'关闭', 'settings.theme':'主题模式', 'settings.themeDesc':'浅色 / 深色 / 跟随系统', 'settings.themeAuto':'跟随系统', 'settings.themeLight':'浅色', 'settings.themeDark':'深色', 'settings.lang':'界面语言', 'settings.langDesc':'中文 / English', 'settings.langZh':'中文', 'settings.langEn':'English', 'settings.density':'界面密度', 'settings.densityDesc':'宽松 / 标准 / 紧凑', 'settings.densityWide':'宽松', 'settings.densityNormal':'标准', 'settings.densityCompact':'紧凑', 'settings.sidebarSide':'侧边栏位置', 'settings.sidebarDesc':'左侧或右侧显示', 'settings.sidebarLeft':'左侧', 'settings.sidebarRight':'右侧', 'settings.mobileStart':'手机版启动页', 'settings.mobileStartDesc':'手机版打开时默认进入的页面', 'settings.pageHome':'首页', 'settings.pageTodo':'待办', 'settings.pageHabit':'习惯', 'settings.pageDates':'重要日期', 'settings.pageLedger':'账本', 'settings.pageFirst':'人生第一次', 'settings.pageMilestones':'大事记', 'settings.pageMemos':'备忘录', 'settings.clearData':'清空所有数据'
     },
 
     en: {
       'brand.sub':'Turning days into gentle bookmarks · live well today',
-      'header.theme':'Theme', 'header.remind':'Remind', 'header.logout':'Log out',
+      'header.theme':'Theme', 'header.remind':'Remind', 'header.settings':'Settings',
       'sidebar.position':'Sidebar side', 'sidebar.left':'◀ Left', 'sidebar.right':'Right ▶',
       'sidebar.foot':'🌷 Drag the edge to resize · Switch left/right',
       'nav.overview':'Overview', 'nav.tools':'Tools', 'nav.milestones':'Chronicle', 'nav.memos':'Memos', 'nav.todo':'Todos', 'nav.habit':'Habits', 'nav.dates':'Dates', 'nav.ledger':'Ledger', 'nav.first':'First Times',
@@ -1040,7 +1276,7 @@
       'habit.title':'🌿 Habit Tracking', 'habit.tool':'Light a small flower every day; continuous days become a garland', 'habit.new':'New habit name', 'habit.add':'＋ Add Habit', 'habit.pause':'Pause', 'habit.resume':'Resume', 'habit.check':'☑ Check in', 'habit.doneToday':'Checked today ✓', 'habit.streak':'Streak', 'habit.total':'Total', 'habit.paused':'Paused',
       'dates.title':'💝 Important Dates', 'dates.tool':'Write expectations into countdowns; preparations grow day by day', 'dates.add':'✚ Add Important Date', 'dates.addHint':'Custom repeat available', 'dates.name':'Name *', 'dates.type':'Type', 'dates.date':'Start date *', 'dates.repeat':'Repeat rule', 'dates.every':'Every', 'dates.everyUnit':'day/week/month/year', 'dates.customHint':'Repeats once (only for Custom interval)', 'dates.addBtn':'＋ Add',
       'ledger.title':'💰 Expense Ledger', 'ledger.tool':'Entering “食堂午餐” auto-categorizes as Dining', 'ledger.budget':'🎯 Monthly Budget', 'ledger.month':'Budget month', 'ledger.amount':'Budget amount', 'ledger.saveBudget':'Save Budget', 'ledger.used':'Used', 'ledger.leftDays':'Days left', 'ledger.daily':'Daily available', 'ledger.entry':'Add Entry', 'ledger.date':'Date', 'ledger.incomeType':'Income/Expense', 'ledger.category':'Category', 'ledger.money':'Amount *', 'ledger.pay':'Payment method', 'ledger.desc':'Description (try “食堂午餐”)', 'ledger.add':'Add Entry', 'ledger.records':'📒 Entries',
-      'first.title':'✨ First-Time Experiences', 'first.tool':'First times can be small, yet still worth treasuring', 'first.add':'Record a New First', 'first.name':'Event name *', 'first.category':'Category', 'first.date':'Date', 'first.desc':'One-line description', 'first.save':'Save First Experience'
+      'first.title':'✨ First-Time Experiences', 'first.tool':'First times can be small, yet still worth treasuring', 'first.add':'Record a New First', 'first.name':'Event name *', 'first.category':'Category', 'first.date':'Date', 'first.desc':'One-line description', 'first.save':'Save First Experience', 'settings.title':'⚙️ Settings', 'settings.motion':'Animations', 'settings.motionDesc':'Turn off to reduce transitions and animations for smoother scrolling', 'settings.blur':'Frosted glass', 'settings.blurDesc':'Auto: off on mobile, on on desktop. You can also force it on or off.', 'settings.blurAuto':'Auto', 'settings.blurOn':'On', 'settings.blurOff':'Off', 'settings.close':'Close', 'settings.theme':'Theme mode', 'settings.themeDesc':'Light / Dark / System', 'settings.themeAuto':'Follow system', 'settings.themeLight':'Light', 'settings.themeDark':'Dark', 'settings.lang':'Language', 'settings.langDesc':'中文 / English', 'settings.langZh':'中文', 'settings.langEn':'English', 'settings.density':'Density', 'settings.densityDesc':'Wide / Normal / Compact', 'settings.densityWide':'Wide', 'settings.densityNormal':'Normal', 'settings.densityCompact':'Compact', 'settings.sidebarSide':'Sidebar side', 'settings.sidebarDesc':'Show on left or right', 'settings.sidebarLeft':'Left', 'settings.sidebarRight':'Right', 'settings.mobileStart':'Mobile start page', 'settings.mobileStartDesc':'Default page when opening on mobile', 'settings.pageHome':'Home', 'settings.pageTodo':'Todos', 'settings.pageHabit':'Habits', 'settings.pageDates':'Dates', 'settings.pageLedger':'Ledger', 'settings.pageFirst':'First Times', 'settings.pageMilestones':'Chronicle', 'settings.pageMemos':'Memos', 'settings.clearData':'Clear all data'
     }
   };
 
@@ -1073,7 +1309,11 @@
       const key = el.getAttribute('data-i18n-placeholder');
       if (I18N[lang] && I18N[lang][key]) el.setAttribute('placeholder', I18N[lang][key]);
     });
-    // Then translate remaining exact Chinese UI texts / restore them when switching back
+    const langBtn = document.getElementById('langToggleText');
+    if (langBtn) langBtn.textContent = lang === 'zh' ? 'English' : '中文';
+    // In default Chinese mode, skip the expensive DOM text walker unless it was
+    // previously translated to English.
+    if (lang === 'zh' && !textMapDirty) return;
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     const nodes = [];
     while (walker.nextNode()) nodes.push(walker.currentNode);
@@ -1081,29 +1321,33 @@
       nodes.forEach(node => {
         const raw = node.nodeValue || '';
         const text = raw.trim();
-        if (text && TEXT_MAP[text]) {
-          node.nodeValue = raw.replace(text, TEXT_MAP[text]);
-        }
+        if (text && TEXT_MAP[text]) node.nodeValue = raw.replace(text, TEXT_MAP[text]);
       });
+      textMapDirty = true;
     } else {
       const EN_TO_ZH = Object.fromEntries(Object.entries(TEXT_MAP).map(([zh, en]) => [en, zh]));
       nodes.forEach(node => {
         const raw = node.nodeValue || '';
         const text = raw.trim();
-        if (text && EN_TO_ZH[text]) {
-          node.nodeValue = raw.replace(text, EN_TO_ZH[text]);
-        }
+        if (text && EN_TO_ZH[text]) node.nodeValue = raw.replace(text, EN_TO_ZH[text]);
       });
+      textMapDirty = false;
     }
-    const langBtn = document.getElementById('langToggleText');
-    if (langBtn) langBtn.textContent = lang === 'zh' ? 'English' : '中文';
   }
+
   function t(key) { return (I18N[lang] && I18N[lang][key]) || key; }
   function applyLang() {
     document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
     translateStatic();
   }
+  function resolveTheme() {
+    if (themeMode === 'auto' && window.matchMedia) {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    return themeMode === 'dark' ? 'dark' : 'light';
+  }
   function applyTheme() {
+    theme = resolveTheme();
     document.body.classList.toggle('theme-dark', theme === 'dark');
     const btn = document.getElementById('themeToggle');
     if (btn) {
@@ -1278,13 +1522,7 @@
       default: return '不重复';
     }
   }
-  function countdownText(dateStr) {
-    if (!dateStr) return null;
-    const n = diffDays(todayStr(), dateStr);
-    if (n < 0) return '已过';
-    if (n === 0) return '就是今天';
-    return n + '天';
-  }
+
   function upcomingDates() {
     state.dates.forEach(normalizeDateRepeat);
     return state.dates
@@ -1636,7 +1874,6 @@
     const filter = $('typeFilter').value;
     let list = state.todos.filter(t => filter === 'all' || t.type === filter);
     const today = todayStr();
-    const in7 = addDays(today, 7);
     return {
       today: list.filter(t => t.status !== '已完成' && (!t.due || t.due === today)),
       future: list.filter(t => t.status !== '已完成' && t.due && t.due > today),
@@ -2334,14 +2571,12 @@
 
     // Theme / Language / Tools
     $('themeToggle').addEventListener('click', () => {
-      theme = theme === 'dark' ? 'light' : 'dark';
-      try { localStorage.setItem(THEME_KEY, theme); } catch(e) {}
+      themeMode = theme === 'dark' ? 'light' : 'dark';
+      try { localStorage.setItem(THEME_MODE_KEY, themeMode); } catch(e) {}
       applyTheme();
+      if ($('settingTheme')) $('settingTheme').value = themeMode;
+      if ($('settingLang')) $('settingLang').value = lang;
       toast(theme === 'dark' ? (lang === 'zh' ? '已切换深色主题' : 'Dark theme enabled') : (lang === 'zh' ? '已切换浅色主题' : 'Light theme enabled'));
-    });
-    $('logoutBtn').addEventListener('click', () => {
-      localStorage.removeItem(SESSION_KEY);
-      location.reload();
     });
     $('langToggle').addEventListener('click', () => {
       lang = lang === 'zh' ? 'en' : 'zh';
@@ -2351,6 +2586,7 @@
       updateDateRepeatUI();
       updatePomodoroUI();
       translateStatic();
+      updateSettingsUI();
       toast(lang === 'zh' ? '已切换为中文' : 'Switched to English');
     });
     $('exportBtn').addEventListener('click', exportData);
@@ -2538,121 +2774,19 @@
     save(); renderAll(); toast('已收藏这个第一次 ✨');
   }
 
-  /* ---------- Local Login (single-file local accounts) ---------- */
-  const AUTH_USERS_KEY = 'huajian-auth-users-v1';
-  const SESSION_KEY = 'huajian-auth-session-v1';
-  let authBound = false;
-
-  function hashString(str) {
-    let h = 5381;
-    for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) | 0;
-    return 'h' + (h >>> 0).toString(36) + '_' + str.length;
-  }
-  function authUsers() {
-    try { return JSON.parse(localStorage.getItem(AUTH_USERS_KEY) || '{}'); } catch(e) { return {}; }
-  }
-  function saveAuthUsers(users) {
-    try { localStorage.setItem(AUTH_USERS_KEY, JSON.stringify(users)); } catch(e) {}
-  }
-  function userDataKey(username) {
-    return 'huajian-life-dashboard-v1-' + username;
-  }
-  function loadStateForUser(username) {
-    DATA_KEY = userDataKey(username);
-    const oldRaw = localStorage.getItem('huajian-life-dashboard-v1');
-    const userRaw = localStorage.getItem(DATA_KEY);
-    if (!userRaw && oldRaw) {
-      try {
-        const parsed = JSON.parse(oldRaw);
-        if (parsed && Array.isArray(parsed.todos)) localStorage.setItem(DATA_KEY, oldRaw);
-      } catch(e) {}
-    }
-    try {
-      state = Object.assign(defaultState(), JSON.parse(localStorage.getItem(DATA_KEY) || '{}'));
-    } catch(e) {
-      state = defaultState();
-    }
-    state.dates.forEach(normalizeDateRepeat);
-  }
-  function setAuthMsg(id, text) { $(id).textContent = text || ''; }
-  function bindAuthEvents() {
-    if (authBound) return;
-    authBound = true;
-    function showRegister() {
-      $('authLoginView').style.display = 'none';
-      $('authRegisterView').style.display = 'block';
-      setAuthMsg('authMessage',''); setAuthMsg('regMessage','');
-    }
-    function showLogin() {
-      $('authRegisterView').style.display = 'none';
-      $('authLoginView').style.display = 'block';
-      setAuthMsg('authMessage',''); setAuthMsg('regMessage','');
-    }
-    $('authGoRegister').addEventListener('click', showRegister);
-    $('authGoLogin').addEventListener('click', showLogin);
-
-    $('authLoginBtn').addEventListener('click', () => {
-      const u = $('authUsername').value.trim();
-      const p = $('authPassword').value;
-      const users = authUsers();
-      const rec = users[u];
-      if (!rec) { setAuthMsg('authMessage', lang === 'zh' ? '用户不存在，请先创建账号' : 'User not found. Please create an account.'); return; }
-      if (rec.hash !== hashString(rec.salt + p + u)) { setAuthMsg('authMessage', lang === 'zh' ? '密码不正确' : 'Incorrect password'); return; }
-      localStorage.setItem(SESSION_KEY, u);
-      loadStateForUser(u);
-      $('authMask').style.display = 'none';
-      startApp();
-    });
-    $('authRegisterBtn').addEventListener('click', () => {
-      const u = $('regUsername').value.trim();
-      const p = $('regPassword').value;
-      const p2 = $('regPassword2').value;
-      if (!u || !p) { setAuthMsg('regMessage', lang === 'zh' ? '用户名和密码不能为空' : 'Username and password are required'); return; }
-      if (p !== p2) { setAuthMsg('regMessage', lang === 'zh' ? '两次密码不一致' : 'Passwords do not match'); return; }
-      const users = authUsers();
-      if (users[u]) { setAuthMsg('regMessage', lang === 'zh' ? '用户名已存在' : 'Username already exists'); return; }
-      const salt = Math.random().toString(36).slice(2);
-      users[u] = { salt, hash: hashString(salt + p + u) };
-      saveAuthUsers(users);
-      localStorage.setItem(SESSION_KEY, u);
-      loadStateForUser(u);
-      $('authMask').style.display = 'none';
-      startApp();
-    });
-    // Enter key login/register
-    $('authPassword').addEventListener('keydown', e => { if (e.key === 'Enter') $('authLoginBtn').click(); });
-    $('regPassword2').addEventListener('keydown', e => { if (e.key === 'Enter') $('authRegisterBtn').click(); });
-  }
-  function startAuthFlow() {
-    const users = authUsers();
-    const session = localStorage.getItem(SESSION_KEY);
-    if (session && users[session]) {
-      loadStateForUser(session);
-      startApp();
-      return;
-    }
-    bindAuthEvents();
-    $('authMask').style.display = 'flex';
-    if (Object.keys(users).length === 0) {
-      $('authGoRegister').click();
-    } else {
-      $('authGoLogin').click();
-    }
-  }
-
   function startApp() {
     try {
       lang = localStorage.getItem(LANG_KEY) || 'zh';
-      theme = localStorage.getItem(THEME_KEY) || 'light';
+      const savedMode = localStorage.getItem(THEME_MODE_KEY);
+      const legacyTheme = localStorage.getItem(THEME_KEY) || 'light';
+      themeMode = savedMode || (legacyTheme === 'dark' ? 'dark' : 'light');
+      theme = legacyTheme;
     } catch(e) {}
     if (!['zh','en'].includes(lang)) lang = 'zh';
+    if (!['auto','light','dark'].includes(themeMode)) themeMode = 'light';
     if (!['light','dark'].includes(theme)) theme = 'light';
     applyLang();
     applyTheme();
-    const authMask = $('authMask');
-    if (authMask) authMask.style.display = 'none';
-    const logoutBtn = $('logoutBtn');
-    if (logoutBtn) logoutBtn.style.display = 'none';
     if (!$('budgetMonth').value) $('budgetMonth').value = todayStr().slice(0,7);
     if (!$('entryDate').value) $('entryDate').value = todayStr();
     if (!$('firstDate').value) $('firstDate').value = todayStr();
@@ -2663,6 +2797,7 @@
     resetTodoForm();
     resetMemoForm();
     initSidebar();
+    initSettings();
     renderAll();
     translateStatic();
     bindEvents();
